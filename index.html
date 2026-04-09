@@ -327,6 +327,40 @@
   </div>
 </div>
 
+<!-- ══ ADMIN DASHBOARD ══ -->
+<div id="page-admin" class="page">
+  <nav class="navbar">
+    <div class="nav-logo"><span>F</span> FindIt <span class="admin-chip">Admin</span></div>
+    <div class="nav-user">
+      <div class="rt-indicator"><div class="rt-dot"></div> Live</div>
+      <div class="avatar" style="background:#8B2FC9;">AD</div>
+      <button class="nav-btn outline" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+  <div style="flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0;" class="dashboard-layout">
+    <aside class="sidebar" style="background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">Management</div>
+      <a class="sidebar-link active" onclick="switchTab('admin','overview',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">📊</span> Dashboard
+      </a>
+      <a class="sidebar-link" onclick="switchTab('admin','found-mgmt',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">📦</span> Found Items
+      </a>
+      <a class="sidebar-link" onclick="switchTab('admin','lost-mgmt',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">📋</span> Lost Items
+      </a>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">System</div>
+      <a class="sidebar-link" onclick="switchTab('admin','audit',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">🕵️</span> Audit Trail
+      </a>
+      <a class="sidebar-link" onclick="switchTab('admin','users',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">👥</span> Users
+      </a>
+    </aside>
+    <main class="main-content" id="admin-main" style="flex:1;overflow-y:auto;padding:2rem;"></main>
+  </div>
+</div>
+
 <style>
   .sidebar-link { display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:400;color:var(--text-muted);cursor:pointer;transition:all 0.12s;text-decoration:none; }
   .sidebar-link:hover { background:var(--surface2);color:var(--text); }
