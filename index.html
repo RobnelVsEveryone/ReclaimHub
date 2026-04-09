@@ -487,6 +487,102 @@
 <!-- ══ ALL JAVASCRIPT ══ -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+
+const API = 'http://localhost:3000/api';
+let TOKEN = localStorage.getItem('findit_token') || null;
+
+function apiHeaders() {
+  return { 'Content-Type': 'application/json', ...(TOKEN ? { 'Authorization': `Bearer ${TOKEN}` } : {}) };
+}
+
+// Override doLogin to call real API
+async function doLogin() {
+  let ok = true;
+  ok = validateField('login-email','login-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
+  ok = validateField('login-pass','login-pass-err', v => v.length > 0) && ok;
+  if (!ok) return;
+
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+
+  try {
+    const res  = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password: pass }) });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+
+    TOKEN = data.token;
+    localStorage.setItem('findit_token', TOKEN);
+    currentUser = data.user;
+    loginAs(data.user);
+  } catch (e) {
+    showToast('Cannot reach server. Is it running?', true);
+  }
+}
+
+async function doRegister() {
+  let ok = true;
+  ok = validateField('reg-fname','reg-fname-err', v => v.length > 0) && ok;
+  ok = validateField('reg-lname','reg-lname-err', v => v.length > 0) && ok;
+  ok = validateField('reg-email','reg-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
+  ok = validateField('reg-phone','reg-phone-err', v => v.length >= 7) && ok;
+  ok = validateField('reg-pass','reg-pass-err', v => v.length >= 8) && ok;
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  if (pass !== pass2) { document.getElementById('reg-pass2').classList.add('error'); document.getElementById('reg-pass2-err').classList.add('show'); ok = false; }
+  if (!ok) return;
+
+  try {
+    const res  = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ first_name: document.getElementById('reg-fname').value.trim(), last_name: document.getElementById('reg-lname').value.trim(), email: document.getElementById('reg-email').value.trim(), phone: document.getElementById('reg-phone').value.trim(), password: pass }) });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+    showToast('Account created! Please log in.');
+    showPage('page-login');
+  } catch (e) {
+    showToast('Cannot reach server. Is it running?', true);
+  }
+}
+
+async function loadFoundItems() {
+  try {
+    const res  = await fetch(`${API}/found`, { headers: apiHeaders() });
+    const data = await res.json();
+    if (data.success) foundItems = data.data.map(i => ({ ...i, name: i.item_name, desc: i.description, dateFound: i.date_found }));
+  } catch (e) { console.warn('Could not load found items'); }
+}
+
+async function loadLostItems() {
+  try {
+    const res  = await fetch(`${API}/lost`, { headers: apiHeaders() });
+    const data = await res.json();
+    if (data.success) lostItems = data.data.map(i => ({ ...i, name: i.item_name, desc: i.description, dateLost: i.date_lost, user: i.reporter_name || 'Unknown' }));
+  } catch (e) { console.warn('Could not load lost items'); }
+}
+
+async function loadStats() {
+  try {
+    const res  = await fetch(`${API}/stats`, { headers: apiHeaders() });
+    const data = await res.json();
+    return data.success ? data.data : null;
+  } catch (e) { return null; }
+}
+
+// WebSocket connection
+function connectWS() {
+  const ws = new WebSocket('ws://localhost:3000');
+  ws.onopen = () => console.log('🔌 WebSocket connected');
+  ws.onmessage = (msg) => {
+    const { event, data } = JSON.parse(msg.data);
+    console.log('📡 WS event:', event, data);
+    // Refresh data on any CRUD event
+    if (['found_item_created','found_item_updated','found_item_deleted'].includes(event)) loadFoundItems();
+    if (['lost_item_created','lost_item_updated','lost_item_deleted','lost_item_status_updated'].includes(event)) loadLostItems();
+    if (event === 'audit_log') activityFeed.unshift({ type:'blue', text: `${data.username}: ${data.action}`, time:'just now' });
+  };
+  ws.onclose = () => setTimeout(connectWS, 3000); // auto-reconnect
+}
+
+connectWS();
+
 // ── STATE ──
 let currentUser = null;
 let reportMap = null;
@@ -593,15 +689,19 @@ function doRegister() {
 }
 
 function loginAs(user) {
+ async function loginAs(user) {
   currentUser = user;
+  await loadFoundItems();
+  await loadLostItems();
   if (user.role === 'admin') {
     showPage('page-admin');
     renderAdminTab('overview');
   } else {
-    document.getElementById('user-avatar').textContent = user.avatar;
+    document.getElementById('user-avatar').textContent = (user.name || user.email)[0].toUpperCase() + (user.name?.split(' ')[1]?.[0] || '');
     showPage('page-user');
     renderUserTab('overview');
   }
+}
 }
 
 function doLogout() { currentUser = null; showPage('page-landing'); }

@@ -45,20 +45,56 @@ async function connectDB() {
 // ============================================================
 //  START SERVER
 // ============================================================
-async function startServer() {
-  await connectDB();
 
-  server.listen(PORT, () => {
-    console.log('');
-    console.log('╔══════════════════════════════════════════╗');
-    console.log('║       ReclaimHub — Lost & Found System   ║');
-    console.log('╚══════════════════════════════════════════╝');
-    console.log(`✅ Server started on http://localhost:${PORT}`);
-    console.log(`✅ WebSocket ready on ws://localhost:${PORT}`);
-    console.log(`✅ Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log('──────────────────────────────────────────');
+//  WEBSOCKET
+// ============================================================
+
+// Broadcast a JSON event to ALL connected WS clients
+function broadcast(event, data) {
+  const payload = JSON.stringify({ event, data, timestamp: new Date().toISOString() });
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(payload);
+    }
   });
 }
+
+wss.on('connection', (ws, req) => {
+  const clientIp = req.socket.remoteAddress;
+  console.log(`🔌 WebSocket client connected  — IP: ${clientIp}  | Total clients: ${wss.clients.size}`);
+
+  ws.on('close', () => {
+    console.log(`🔌 WebSocket client disconnected — Remaining: ${wss.clients.size}`);
+  });
+
+  // Send a welcome ping so the frontend knows WS is live
+  ws.send(JSON.stringify({ event: 'connected', data: { message: 'WebSocket live — FindIt server' }, timestamp: new Date().toISOString() }));
+});
+
+// ============================================================
+//  AUDIT TRAIL HELPER
+//  Writes to DB + prints to console
+// ============================================================
+async function logAudit(userId, username, action, targetTable, targetId = null) {
+  try {
+    await db.query(
+      `INSERT INTO audit_logs (user_id, username, action, target_table, target_id, created_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [userId, username, action, targetTable, targetId]
+    );
+    console.log(`📋 AUDIT | user: ${username} | action: ${action} | table: ${targetTable} | id: ${targetId ?? '—'} | ${new Date().toLocaleTimeString()}`);
+
+    // Broadcast audit event in real-time
+    broadcast('audit_log', { username, action, targetTable, targetId });
+  } catch (err) {
+    console.error('❌ Audit log failed:', err.message);
+  }
+}
+
+
+// ============================================================
+//  AUTH MIDDLEWARE  (JWT)
+// ============================================================
 
 function authMiddleware(requiredRole = null) {
   return (req, res, next) => {
@@ -472,5 +508,21 @@ app.delete('/api/lost/:id', authMiddleware('admin'), async (req, res) => {
     return res.status(500).json({ success: false, message: 'Server error.' });
   }
 });
+
+async function startServer() {
+  await connectDB();
+
+  server.listen(PORT, () => {
+    console.log('');
+    console.log('╔══════════════════════════════════════════╗');
+    console.log('║       ReclaimHub — Lost & Found System   ║');
+    console.log('╚══════════════════════════════════════════╝');
+    console.log(`✅ Server started on http://localhost:${PORT}`);
+    console.log(`✅ WebSocket ready on ws://localhost:${PORT}`);
+    console.log(`✅ Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('──────────────────────────────────────────');
+  });
+}
+
 
 startServer();
