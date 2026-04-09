@@ -361,6 +361,686 @@
   </div>
 </div>
 
+<!-- ══ REPORT LOST ITEM MODAL ══ -->
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-report" class="modal-overlay">
+  <div style="background:var(--surface);border-radius:var(--radius);padding:2rem;width:100%;max-width:560px;position:relative;box-shadow:var(--shadow-lg);margin:auto;">
+    <button onclick="closeModal('modal-report')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px;border-radius:6px;">✕</button>
+    <h2 style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:0.4rem;">Report a Lost Item</h2>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Fill in the details below. We'll help connect you with the right person.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Your Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="r-name" placeholder="Full name"/>
+        <div class="field-error" id="r-name-err">Required.</div>
+      </div>
+      <div class="form-group">
+        <label>Item Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="r-item" placeholder="e.g. Blue Backpack"/>
+        <div class="field-error" id="r-item-err">Required.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description <span style="color:var(--danger)">*</span></label>
+      <textarea id="r-desc" rows="3" placeholder="Describe the item — color, brand, markings..."></textarea>
+      <div class="field-error" id="r-desc-err">Please provide a description.</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date Lost <span style="color:var(--danger)">*</span></label>
+        <input type="date" id="r-date"/>
+        <div class="field-error" id="r-date-err">Required.</div>
+      </div>
+      <div class="form-group">
+        <label>Location (text)</label>
+        <input type="text" id="r-location" placeholder="e.g. Cafeteria"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Picture (optional)</label>
+      <div style="border:1.5px dashed var(--border-strong);border-radius:8px;padding:1.2rem;text-align:center;cursor:pointer;transition:all 0.15s;" onclick="document.getElementById('r-photo').click()">
+        <p style="font-size:13px;color:var(--text-muted);">📷 Click to upload a photo</p>
+        <span style="font-size:12px;color:var(--text-light);display:block;margin-top:4px;">JPEG, PNG — max 5MB</span>
+        <input type="file" id="r-photo" accept="image/*" style="display:none" onchange="previewImg(this)"/>
+      </div>
+      <img id="img-preview" alt="preview" style="max-width:100%;max-height:120px;border-radius:8px;margin-top:8px;display:none;object-fit:cover;"/>
+    </div>
+    <div class="form-group">
+      <label>📍 Pin Location on Map</label>
+      <div id="report-map" style="height:220px;border-radius:8px;border:1.5px solid var(--border-strong);margin-top:6px;"></div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Click anywhere on the map to drop a pin at the exact location.</p>
+      <p style="font-size:12px;color:var(--accent);font-weight:500;margin-top:4px;" id="map-coords"></p>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
+      <button class="btn-sm outline" onclick="closeModal('modal-report')">Cancel</button>
+      <button class="btn-sm primary" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT STATUS MODAL ══ -->
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-status" class="modal-overlay">
+  <div style="background:var(--surface);border-radius:var(--radius);padding:2rem;width:100%;max-width:360px;position:relative;box-shadow:var(--shadow-lg);margin:auto;">
+    <button onclick="closeModal('modal-status')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px;border-radius:6px;">✕</button>
+    <h2 style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:0.4rem;">Edit Item Status</h2>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Update the status of this lost item.</p>
+    <div class="form-group">
+      <label>Item</label>
+      <input type="text" id="status-item-name" readonly style="background:var(--surface2);"/>
+    </div>
+    <div class="form-group">
+      <label>Status <span style="color:var(--danger)">*</span></label>
+      <select id="status-select">
+        <option value="Pending">Pending</option>
+        <option value="Resolved">Resolved</option>
+        <option value="Searching">Searching</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
+      <button class="btn-sm outline" onclick="closeModal('modal-status')">Cancel</button>
+      <button class="btn-sm primary" onclick="saveStatus()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD/EDIT FOUND ITEM MODAL ══ -->
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-found" class="modal-overlay">
+  <div style="background:var(--surface);border-radius:var(--radius);padding:2rem;width:100%;max-width:560px;position:relative;box-shadow:var(--shadow-lg);margin:auto;">
+    <button onclick="closeModal('modal-found')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px;border-radius:6px;">✕</button>
+    <h2 id="found-modal-title" style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:0.4rem;">Post Found Item</h2>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Add details about the item you found.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Item Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="f-name" placeholder="e.g. Umbrella"/>
+        <div class="field-error" id="f-name-err">Required.</div>
+      </div>
+      <div class="form-group">
+        <label>Date Found <span style="color:var(--danger)">*</span></label>
+        <input type="date" id="f-date"/>
+        <div class="field-error" id="f-date-err">Required.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description <span style="color:var(--danger)">*</span></label>
+      <textarea id="f-desc" rows="2" placeholder="Color, brand, condition..."></textarea>
+      <div class="field-error" id="f-desc-err">Required.</div>
+    </div>
+    <div class="form-group">
+      <label>Location <span style="color:var(--danger)">*</span></label>
+      <input type="text" id="f-loc" placeholder="Where was it found?"/>
+      <div class="field-error" id="f-loc-err">Required.</div>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="f-status">
+        <option value="Available">Available</option>
+        <option value="Claimed">Claimed</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
+      <button class="btn-sm outline" onclick="closeModal('modal-found')">Cancel</button>
+      <button class="btn-sm primary" onclick="submitFoundItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ALL JAVASCRIPT ══ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── STATE ──
+let currentUser = null;
+let reportMap = null;
+let reportMarker = null;
+let editingFoundId = null;
+let editingLostId = null;
+
+const users = [
+  { id:1, name:'Maria Santos', email:'maria@school.edu', password:'password123', role:'user', avatar:'MS' },
+  { id:2, name:'Juan Dela Cruz', email:'juan@school.edu', password:'password123', role:'user', avatar:'JD' },
+  { id:3, name:'Admin User', email:'admin@school.edu', password:'admin123', role:'admin', avatar:'AD' },
+];
+
+let foundItems = [
+  { id:1, name:'Black Tumbler', desc:'with key chain', dateFound:'2025-12-10', location:'Roundball Isulan', status:'Available', postedBy:'Admin' },
+  { id:2, name:'Calculator', desc:'with pink case', dateFound:'2025-11-27', location:'Office', status:'Available', postedBy:'Admin' },
+  { id:3, name:'USB Drive', desc:'Sandisk 32GB, blue', dateFound:'2025-11-15', location:'Library', status:'Available', postedBy:'Admin' },
+  { id:4, name:'Water Bottle', desc:'Green Hydro Flask', dateFound:'2025-11-10', location:'Gymnasium', status:'Available', postedBy:'Admin' },
+];
+
+let lostItems = [
+  { id:1, name:'Canvas Tote Bag', user:'lilis', desc:'beige with a picture of cat', dateLost:'2025-12-11', location:'BDO', status:'Resolved', lat:6.9214, lng:122.0790 },
+  { id:2, name:'Phone', user:'rizal', desc:'gggg', dateLost:'2025-11-28', location:'biwang', status:'Resolved', lat:null, lng:null },
+  { id:3, name:'Laptop Acer i5', user:'rizal', desc:'with huge sticker at the monitor', dateLost:'2025-11-28', location:'Roundball Isulan', status:'Resolved', lat:6.9210, lng:122.0784 },
+  { id:4, name:'Blue Backpack', user:'maria', desc:'Nike backpack, has keychain attached', dateLost:'2025-12-05', location:'Canteen', status:'Pending', lat:6.9218, lng:122.0795 },
+];
+
+let auditLog = [
+  { who:'Admin', action:'Posted found item: Black Tumbler', time:'2025-12-10 09:14' },
+  { who:'lilis', action:'Reported lost item: Canvas Tote Bag', time:'2025-12-11 11:32' },
+  { who:'Admin', action:'Marked Canvas Tote Bag as Resolved', time:'2025-12-13 14:05' },
+  { who:'rizal', action:'Reported lost item: Laptop Acer i5', time:'2025-11-28 08:22' },
+  { who:'Admin', action:'Posted found item: Calculator', time:'2025-11-27 10:00' },
+];
+
+let activityFeed = [
+  { type:'green', text:'Canvas Tote Bag marked as Resolved', time:'2 hrs ago' },
+  { type:'blue', text:'New found item posted: USB Drive', time:'4 hrs ago' },
+  { type:'amber', text:'Blue Backpack reported lost by Maria', time:'6 hrs ago' },
+  { type:'green', text:'Phone successfully resolved', time:'1 day ago' },
+];
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function switchTab(panel, tab, el) {
+  const links = document.querySelectorAll(`#page-${panel} .sidebar-link`);
+  links.forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  if (panel === 'user') renderUserTab(tab);
+  else renderAdminTab(tab);
+}
+
+// ── AUTH ──
+function validateField(id, errId, validator) {
+  const val = document.getElementById(id).value.trim();
+  const err = document.getElementById(errId);
+  const ok = validator(val);
+  document.getElementById(id).classList.toggle('error', !ok);
+  err.classList.toggle('show', !ok);
+  return ok;
+}
+
+function doLogin() {
+  let ok = true;
+  ok = validateField('login-email','login-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
+  ok = validateField('login-pass','login-pass-err', v => v.length > 0) && ok;
+  if (!ok) return;
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const user = users.find(u => u.email === email && u.password === pass);
+  if (!user) { showToast('Invalid email or password.', true); return; }
+  loginAs(user);
+}
+
+function doAdminLogin() { loginAs(users.find(u => u.role === 'admin')); }
+
+function doRegister() {
+  let ok = true;
+  ok = validateField('reg-fname','reg-fname-err', v => v.length > 0) && ok;
+  ok = validateField('reg-lname','reg-lname-err', v => v.length > 0) && ok;
+  ok = validateField('reg-email','reg-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
+  ok = validateField('reg-phone','reg-phone-err', v => v.length >= 7) && ok;
+  ok = validateField('reg-pass','reg-pass-err', v => v.length >= 8) && ok;
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  if (pass !== pass2) {
+    document.getElementById('reg-pass2').classList.add('error');
+    document.getElementById('reg-pass2-err').classList.add('show');
+    ok = false;
+  }
+  if (!ok) return;
+  const fname = document.getElementById('reg-fname').value.trim();
+  const lname = document.getElementById('reg-lname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const newUser = { id:users.length+1, name:fname+' '+lname, email, password:pass, role:'user', avatar:(fname[0]+lname[0]).toUpperCase() };
+  users.push(newUser);
+  loginAs(newUser);
+  showToast('Account created! Welcome to FindIt.');
+}
+
+function loginAs(user) {
+  currentUser = user;
+  if (user.role === 'admin') {
+    showPage('page-admin');
+    renderAdminTab('overview');
+  } else {
+    document.getElementById('user-avatar').textContent = user.avatar;
+    showPage('page-user');
+    renderUserTab('overview');
+  }
+}
+
+function doLogout() { currentUser = null; showPage('page-landing'); }
+
+// ── USER TAB RENDERERS ──
+function renderUserTab(tab) {
+  const main = document.getElementById('user-main');
+  if (tab === 'overview')   main.innerHTML = userOverviewHTML();
+  else if (tab === 'found') main.innerHTML = userFoundHTML();
+  else if (tab === 'lost')  main.innerHTML = userLostHTML();
+  else if (tab === 'myreports') main.innerHTML = myReportsHTML();
+  else if (tab === 'profile')   main.innerHTML = profileHTML();
+  simulateChart();
+}
+
+function userOverviewHTML() {
+  const pending = lostItems.filter(i=>i.status==='Pending').length;
+  const resolved = lostItems.filter(i=>i.status==='Resolved').length;
+  return `
+  <div class="page-header"><h1>Welcome back, ${currentUser.name.split(' ')[0]} 👋</h1><p>Here's what's happening right now.</p></div>
+  <div class="ws-ticker"><div class="rt-dot"></div><span><strong>Live:</strong> WebSocket connected — updates are real-time.</span></div>
+  <div class="metrics-row">
+    <div class="metric-card accent-card"><div class="label">Total Lost</div><div class="value">${lostItems.length}</div><div class="sub">Across all users</div></div>
+    <div class="metric-card"><div class="label">Found Items</div><div class="value">${foundItems.length}</div><div class="sub">Available to claim</div></div>
+    <div class="metric-card"><div class="label">Pending</div><div class="value">${pending}</div><div class="sub">Awaiting resolution</div></div>
+    <div class="metric-card"><div class="label">Resolved</div><div class="value">${resolved}</div><div class="sub">Successfully matched</div></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="section-header"><h2>Activity Feed</h2><div class="rt-indicator"><div class="rt-dot"></div> Live</div></div>
+      <div class="table-wrap" style="padding:0 1rem;">
+        <div class="activity-list">
+          ${activityFeed.map(a=>`<div class="activity-item"><div class="activity-dot ${a.type}"></div><div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-header"><h2>Monthly Reports</h2></div>
+      <div class="chart-container"><canvas id="overview-chart" class="chart-canvas"></canvas><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Lost vs Found — last 6 months</p></div>
+    </div>
+  </div>
+  <div class="section-header"><h2>Quick Actions</h2></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="btn-sm primary" onclick="openModal('modal-report')">+ Report Lost Item</button>
+    <button class="btn-sm outline" onclick="renderUserTab('found')">Browse Found Items</button>
+  </div>`;
+}
+
+function userFoundHTML() {
+  return `
+  <div class="page-header"><h1>Found Items</h1><p>Items turned in — check if yours is here.</p></div>
+  <div class="section-header">
+    <div class="search-bar"><input type="text" placeholder="Search found items..." oninput="filterFoundItems(this.value)" style="width:260px;"/></div>
+    <div class="rt-indicator"><div class="rt-dot"></div> ${foundItems.length} items</div>
+  </div>
+  <div class="items-grid" id="found-grid">
+    ${foundItems.map(item=>`
+    <div class="item-card">
+      <div class="item-card-header"><div class="item-icon">📦</div><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></div>
+      <h3>${item.name}</h3>
+      <div class="meta"><span>📝 ${item.desc}</span><span>📍 ${item.location}</span><span>📅 ${item.dateFound}</span></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function userLostHTML() {
+  return `
+  <div class="page-header"><h1>All Lost Items</h1><p>All reported lost items across the campus.</p></div>
+  <div class="section-header">
+    <div class="search-bar"><input type="text" placeholder="Search lost items..." style="width:240px;"/></div>
+    <button class="btn-sm primary" onclick="openModal('modal-report')">+ Report Lost Item</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Item</th><th>User</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th><th>Map</th></tr></thead>
+    <tbody>${lostItems.map(item=>`
+    <tr>
+      <td style="font-weight:500;">${item.name}</td><td>${item.user}</td>
+      <td style="color:var(--text-muted);max-width:180px;">${item.desc}</td>
+      <td>${item.dateLost}</td><td>${item.location}</td>
+      <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
+      <td>${item.lat?`<button class="btn-sm outline" onclick="viewMap(${item.lat},${item.lng},'${item.name}')">View</button>`:'—'}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function myReportsHTML() {
+  const mine = lostItems.filter(i => i.user === currentUser.name.split(' ')[0].toLowerCase());
+  return `
+  <div class="page-header"><h1>My Reports</h1><p>Lost items you have reported.</p></div>
+  <div class="section-header"><div></div><button class="btn-sm primary" onclick="openModal('modal-report')">+ Report Lost Item</button></div>
+  ${mine.length===0?`<div class="empty-state"><div class="icon">📭</div><p>You haven't reported any lost items yet.</p><button class="btn-sm primary" style="margin-top:1rem;" onclick="openModal('modal-report')">Report Now</button></div>`:`
+  <div class="table-wrap"><table>
+    <thead><tr><th>Item</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th></tr></thead>
+    <tbody>${mine.map(item=>`<tr><td style="font-weight:500;">${item.name}</td><td style="color:var(--text-muted);">${item.desc}</td><td>${item.dateLost}</td><td>${item.location}</td><td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td></tr>`).join('')}</tbody>
+  </table></div>`}`;
+}
+
+function profileHTML() {
+  return `
+  <div class="page-header"><h1>My Profile</h1><p>Manage your account details.</p></div>
+  <div style="max-width:500px;">
+    <div class="table-wrap" style="padding:1.5rem;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:1.5rem;">
+        <div class="avatar" style="width:56px;height:56px;font-size:18px;">${currentUser.avatar}</div>
+        <div><div style="font-weight:600;font-size:16px;">${currentUser.name}</div><div style="color:var(--text-muted);font-size:14px;">${currentUser.email}</div></div>
+      </div>
+      <div class="form-group"><label>Full Name</label><input type="text" value="${currentUser.name}"/></div>
+      <div class="form-group"><label>Email</label><input type="email" value="${currentUser.email}"/></div>
+      <div class="form-group"><label>New Password</label><input type="password" placeholder="Leave blank to keep current"/></div>
+      <button class="btn-sm primary" onclick="showToast('Profile updated!')">Save Changes</button>
+    </div>
+  </div>`;
+}
+
+// ── ADMIN TAB RENDERERS ──
+function renderAdminTab(tab) {
+  const main = document.getElementById('admin-main');
+  if (tab === 'overview')    main.innerHTML = adminOverviewHTML();
+  else if (tab === 'found-mgmt') main.innerHTML = adminFoundHTML();
+  else if (tab === 'lost-mgmt')  main.innerHTML = adminLostHTML();
+  else if (tab === 'audit')  main.innerHTML = adminAuditHTML();
+  else if (tab === 'users')  main.innerHTML = adminUsersHTML();
+  simulateChart();
+}
+
+function adminOverviewHTML() {
+  const pending = lostItems.filter(i=>i.status==='Pending').length;
+  const resolved = lostItems.filter(i=>i.status==='Resolved').length;
+  return `
+  <div class="page-header"><h1>Admin Dashboard</h1><p>Full system overview and management.</p></div>
+  <div class="ws-ticker"><div class="rt-dot"></div><span><strong>WebSocket:</strong> All clients connected — real-time updates active.</span></div>
+  <div class="metrics-row">
+    <div class="metric-card accent-card"><div class="label">Total Lost</div><div class="value">${lostItems.length}</div></div>
+    <div class="metric-card"><div class="label">Total Found</div><div class="value">${foundItems.length}</div></div>
+    <div class="metric-card"><div class="label">Pending</div><div class="value">${pending}</div></div>
+    <div class="metric-card"><div class="label">Resolved</div><div class="value">${resolved}</div></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="section-header"><h2>Live Activity</h2><div class="rt-indicator"><div class="rt-dot"></div>Real-time</div></div>
+      <div class="table-wrap" style="padding:0 1rem;">
+        <div class="activity-list">
+          ${activityFeed.map(a=>`<div class="activity-item"><div class="activity-dot ${a.type}"></div><div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-header"><h2>Items by Status</h2></div>
+      <div class="chart-container"><canvas id="admin-chart" class="chart-canvas"></canvas></div>
+    </div>
+  </div>
+  <div class="section-header" style="margin-top:1rem;"><h2>Quick Actions</h2></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="btn-sm primary" onclick="openFoundModal()">+ Post Found Item</button>
+    <button class="btn-sm outline" onclick="renderAdminTab('lost-mgmt')">Manage Lost Items</button>
+    <button class="btn-sm outline" onclick="renderAdminTab('audit')">View Audit Log</button>
+  </div>`;
+}
+
+function adminFoundHTML() {
+  return `
+  <div class="page-header"><h1>Found Items Management</h1><p>Add, edit, or remove found items.</p></div>
+  <div class="section-header">
+    <div class="search-bar"><input type="text" placeholder="Search..." style="width:240px;"/></div>
+    <button class="btn-sm primary" onclick="openFoundModal()">+ Post Found Item</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Item</th><th>Description</th><th>Date Found</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="found-table-body">${renderFoundRows()}</tbody>
+  </table></div>`;
+}
+
+function renderFoundRows() {
+  return foundItems.map(item=>`
+  <tr id="found-row-${item.id}">
+    <td style="font-weight:500;">${item.name}</td>
+    <td style="color:var(--text-muted);">${item.desc}</td>
+    <td>${item.dateFound}</td><td>${item.location}</td>
+    <td><span class="status-chip available">${item.status}</span></td>
+    <td><div class="td-actions">
+      <button class="btn-sm outline" onclick="editFoundItem(${item.id})">Edit</button>
+      <button class="btn-sm danger" onclick="deleteFoundItem(${item.id})">Delete</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function adminLostHTML() {
+  return `
+  <div class="page-header"><h1>Lost Items Management</h1><p>Review and manage all lost item reports.</p></div>
+  <div class="section-header"><div class="search-bar"><input type="text" placeholder="Search..." style="width:240px;"/></div></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Item</th><th>User</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th><th>Map</th><th>Actions</th></tr></thead>
+    <tbody id="lost-table-body">${renderLostRows()}</tbody>
+  </table></div>`;
+}
+
+function renderLostRows() {
+  return lostItems.map(item=>`
+  <tr id="lost-row-${item.id}">
+    <td style="font-weight:500;">${item.name}</td><td>${item.user}</td>
+    <td style="color:var(--text-muted);max-width:160px;">${item.desc}</td>
+    <td>${item.dateLost}</td><td>${item.location}</td>
+    <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
+    <td>${item.lat?`<button class="btn-sm outline" onclick="viewMap(${item.lat},${item.lng},'${item.name}')">View</button>`:'—'}</td>
+    <td><div class="td-actions">
+      <button class="btn-sm outline" onclick="openStatusModal(${item.id})">Edit Status</button>
+      <button class="btn-sm danger" onclick="deleteLostItem(${item.id})">Delete</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function adminAuditHTML() {
+  return `
+  <div class="page-header"><h1>Audit Trail</h1><p>A log of all actions performed in the system.</p></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Who</th><th>Action</th><th>Timestamp</th></tr></thead>
+    <tbody>${auditLog.map(a=>`<tr><td><strong>${a.who}</strong></td><td style="color:var(--text-muted);">${a.action}</td><td style="color:var(--text-light);white-space:nowrap;">${a.time}</td></tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function adminUsersHTML() {
+  return `
+  <div class="page-header"><h1>User Management</h1><p>View all registered users and roles.</p></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Reports</th></tr></thead>
+    <tbody>${users.map(u=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">${u.avatar}</div><span style="font-weight:500;">${u.name}</span></div></td>
+      <td style="color:var(--text-muted);">${u.email}</td>
+      <td><span class="status-chip ${u.role==='admin'?'pending':'available'}">${u.role}</span></td>
+      <td>${lostItems.filter(i=>i.user===u.name.split(' ')[0].toLowerCase()).length}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+// ── MODAL LOGIC ──
+function openModal(id) {
+  document.getElementById(id).style.display = 'flex';
+  if (id === 'modal-report') initMap();
+}
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function initMap() {
+  if (reportMap) { reportMap.remove(); reportMap = null; reportMarker = null; }
+  setTimeout(()=>{
+    reportMap = L.map('report-map').setView([6.9214, 122.0790], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'© OpenStreetMap', maxZoom:19 }).addTo(reportMap);
+    reportMap.on('click', function(e) {
+      const {lat, lng} = e.latlng;
+      if (reportMarker) reportMap.removeLayer(reportMarker);
+      reportMarker = L.marker([lat,lng]).addTo(reportMap).bindPopup('📍 Lost here').openPopup();
+      document.getElementById('map-coords').textContent = `Pinned: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    });
+    reportMap.invalidateSize();
+  }, 200);
+}
+
+function previewImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { const img = document.getElementById('img-preview'); img.src = e.target.result; img.style.display='block'; };
+  reader.readAsDataURL(file);
+}
+
+function submitReport() {
+  let ok = true;
+  ok = validateField('r-name','r-name-err',v=>v.length>0) && ok;
+  ok = validateField('r-item','r-item-err',v=>v.length>0) && ok;
+  ok = validateField('r-desc','r-desc-err',v=>v.length>0) && ok;
+  ok = validateField('r-date','r-date-err',v=>v.length>0) && ok;
+  if (!ok) return;
+  const newItem = {
+    id: lostItems.length+1,
+    name: document.getElementById('r-item').value,
+    user: currentUser ? currentUser.name.split(' ')[0].toLowerCase() : 'guest',
+    desc: document.getElementById('r-desc').value,
+    dateLost: document.getElementById('r-date').value,
+    location: document.getElementById('r-location').value || 'Unknown',
+    status: 'Pending',
+    lat: reportMarker ? reportMarker.getLatLng().lat : null,
+    lng: reportMarker ? reportMarker.getLatLng().lng : null,
+  };
+  lostItems.push(newItem);
+  addAudit(currentUser ? currentUser.name : 'Guest', `Reported lost item: ${newItem.name}`);
+  addActivity('amber', `${newItem.name} reported lost by ${newItem.user}`, 'just now');
+  closeModal('modal-report');
+  showToast('Lost item reported successfully!');
+  document.getElementById('user-lost-badge').textContent = lostItems.filter(i=>i.status==='Pending').length;
+}
+
+function openFoundModal(id=null) {
+  editingFoundId = id;
+  document.getElementById('found-modal-title').textContent = id ? 'Edit Found Item' : 'Post Found Item';
+  if (id) {
+    const item = foundItems.find(i=>i.id===id);
+    document.getElementById('f-name').value = item.name;
+    document.getElementById('f-date').value = item.dateFound;
+    document.getElementById('f-desc').value = item.desc;
+    document.getElementById('f-loc').value = item.location;
+    document.getElementById('f-status').value = item.status;
+  } else {
+    ['f-name','f-date','f-desc','f-loc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-status').value='Available';
+  }
+  document.getElementById('modal-found').style.display='flex';
+}
+
+function submitFoundItem() {
+  let ok = true;
+  ok = validateField('f-name','f-name-err',v=>v.length>0) && ok;
+  ok = validateField('f-date','f-date-err',v=>v.length>0) && ok;
+  ok = validateField('f-desc','f-desc-err',v=>v.length>0) && ok;
+  ok = validateField('f-loc','f-loc-err',v=>v.length>0) && ok;
+  if (!ok) return;
+  const data = { name:document.getElementById('f-name').value, dateFound:document.getElementById('f-date').value, desc:document.getElementById('f-desc').value, location:document.getElementById('f-loc').value, status:document.getElementById('f-status').value, postedBy:'Admin' };
+  if (editingFoundId) {
+    const idx = foundItems.findIndex(i=>i.id===editingFoundId);
+    foundItems[idx] = { ...foundItems[idx], ...data };
+    addAudit('Admin', `Edited found item: ${data.name}`);
+    showToast('Found item updated!');
+  } else {
+    foundItems.push({ id:foundItems.length+1, ...data });
+    addAudit('Admin', `Posted found item: ${data.name}`);
+    addActivity('blue', `New found item posted: ${data.name}`, 'just now');
+    showToast('Found item posted!');
+  }
+  closeModal('modal-found');
+  const tbody = document.getElementById('found-table-body');
+  if (tbody) tbody.innerHTML = renderFoundRows();
+}
+
+function editFoundItem(id) { openFoundModal(id); }
+
+function deleteFoundItem(id) {
+  foundItems = foundItems.filter(i=>i.id!==id);
+  addAudit('Admin',`Deleted found item #${id}`);
+  const tbody = document.getElementById('found-table-body');
+  if (tbody) tbody.innerHTML = renderFoundRows();
+  showToast('Found item deleted.');
+}
+
+function openStatusModal(id) {
+  editingLostId = id;
+  const item = lostItems.find(i=>i.id===id);
+  document.getElementById('status-item-name').value = item.name;
+  document.getElementById('status-select').value = item.status;
+  document.getElementById('modal-status').style.display='flex';
+}
+
+function saveStatus() {
+  const newStatus = document.getElementById('status-select').value;
+  const item = lostItems.find(i=>i.id===editingLostId);
+  item.status = newStatus;
+  addAudit('Admin',`Changed status of "${item.name}" to ${newStatus}`);
+  if (newStatus==='Resolved') addActivity('green',`${item.name} marked as Resolved`,'just now');
+  closeModal('modal-status');
+  showToast(`Status updated to ${newStatus}`);
+  const tbody = document.getElementById('lost-table-body');
+  if (tbody) tbody.innerHTML = renderLostRows();
+}
+
+function deleteLostItem(id) {
+  const item = lostItems.find(i=>i.id===id);
+  lostItems = lostItems.filter(i=>i.id!==id);
+  addAudit('Admin',`Deleted lost item: ${item.name}`);
+  const tbody = document.getElementById('lost-table-body');
+  if (tbody) tbody.innerHTML = renderLostRows();
+  showToast('Lost item deleted.');
+}
+
+// ── HELPERS ──
+function addAudit(who, action) {
+  const now = new Date();
+  const time = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  auditLog.unshift({ who, action, time });
+}
+
+function addActivity(type, text, time) {
+  activityFeed.unshift({ type, text, time });
+  if (activityFeed.length > 8) activityFeed.pop();
+}
+
+function filterFoundItems(query) {
+  const grid = document.getElementById('found-grid'); if (!grid) return;
+  const q = query.toLowerCase();
+  grid.innerHTML = foundItems.filter(i=>i.name.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q)||i.location.toLowerCase().includes(q)).map(item=>`
+  <div class="item-card">
+    <div class="item-card-header"><div class="item-icon">📦</div><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></div>
+    <h3>${item.name}</h3>
+    <div class="meta"><span>📝 ${item.desc}</span><span>📍 ${item.location}</span><span>📅 ${item.dateFound}</span></div>
+  </div>`).join('');
+}
+
+function viewMap(lat, lng, name) { window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`,'_blank'); }
+
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (isError?' error':'');
+  setTimeout(()=>{ t.className=''; }, 3000);
+}
+
+function simulateChart() {
+  setTimeout(()=>{
+    const canvas = document.getElementById('overview-chart') || document.getElementById('admin-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    canvas.width=W; canvas.height=H;
+    const months=['Aug','Sep','Oct','Nov','Dec','Jan'];
+    const lostData=[8,12,9,14,7,4];
+    const foundData=[5,8,6,10,5,2];
+    const maxV=18, padL=32, padB=24, padT=10, padR=10;
+    const cW=W-padL-padR, cH=H-padT-padB;
+    const barW=Math.floor(cW/months.length*0.35);
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,0,0,0.06)'; ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){
+      const y=padT+cH-(cH/4*i);
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+      ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='right';
+      ctx.fillText(Math.round(maxV/4*i),padL-4,y+3);
+    }
+    months.forEach((m,i)=>{
+      const x=padL+(i/months.length)*cW+cW/(months.length*2);
+      const lH=(lostData[i]/maxV)*cH, fH=(foundData[i]/maxV)*cH;
+      ctx.fillStyle='#2A5C45'; ctx.fillRect(x-barW-2,padT+cH-lH,barW,lH);
+      ctx.fillStyle='#4A9B72'; ctx.fillRect(x+2,padT+cH-fH,barW,fH);
+      ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(m,x,H-6);
+    });
+    ctx.fillStyle='#2A5C45'; ctx.fillRect(padL,6,10,8);
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='left'; ctx.fillText('Lost',padL+13,13);
+    ctx.fillStyle='#4A9B72'; ctx.fillRect(padL+45,6,10,8);
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillText('Found',padL+58,13);
+  },150);
+}
+</script>
+
 <style>
   .sidebar-link { display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:400;color:var(--text-muted);cursor:pointer;transition:all 0.12s;text-decoration:none; }
   .sidebar-link:hover { background:var(--surface2);color:var(--text); }
