@@ -292,6 +292,48 @@
   </div>
 </div>
 
+<!-- ══ USER DASHBOARD ══ -->
+<div id="page-user" class="page">
+  <nav class="navbar">
+    <div class="nav-logo"><span>F</span> FindIt</div>
+    <div class="nav-user">
+      <div class="rt-indicator"><div class="rt-dot"></div> Live</div>
+      <div class="avatar" id="user-avatar">MS</div>
+      <button class="nav-btn outline" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+  <div style="flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0;" class="dashboard-layout">
+    <aside class="sidebar" style="background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">Menu</div>
+      <a class="sidebar-link active" onclick="switchTab('user','overview',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">📊</span> Overview
+      </a>
+      <a class="sidebar-link" onclick="switchTab('user','found',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">🔍</span> Found Items
+      </a>
+      <a class="sidebar-link" onclick="switchTab('user','lost',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">📋</span> Lost Items
+        <span id="user-lost-badge" style="margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:1px 7px;border-radius:100px;">4</span>
+      </a>
+      <a class="sidebar-link" onclick="switchTab('user','myreports',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">📝</span> My Reports
+      </a>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">Account</div>
+      <a class="sidebar-link" onclick="switchTab('user','profile',this)">
+        <span style="font-size:16px;width:20px;text-align:center;">👤</span> Profile
+      </a>
+    </aside>
+    <main class="main-content" id="user-main" style="flex:1;overflow-y:auto;padding:2rem;"></main>
+  </div>
+</div>
+
+<style>
+  .sidebar-link { display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:400;color:var(--text-muted);cursor:pointer;transition:all 0.12s;text-decoration:none; }
+  .sidebar-link:hover { background:var(--surface2);color:var(--text); }
+  .sidebar-link.active { background:var(--accent-light);color:var(--accent);font-weight:500; }
+  .main-content { flex:1;overflow-y:auto;padding:2rem; }
+</style>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
