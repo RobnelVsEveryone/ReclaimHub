@@ -8,59 +8,32 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
   :root {
-    --bg: #F7F4EF;
-    --surface: #FFFFFF;
-    --surface2: #F0EDE7;
-    --accent: #2A5C45;
-    --accent2: #4A9B72;
-    --accent-light: #E8F4EE;
-    --text: #1A1A1A;
-    --text-muted: #6B6861;
-    --text-light: #9E9A93;
-    --border: rgba(0,0,0,0.1);
-    --border-strong: rgba(0,0,0,0.18);
-    --danger: #C0392B;
-    --danger-light: #FDECEA;
-    --warning: #D4870A;
-    --warning-light: #FEF6E4;
-    --success: #2A7D4F;
-    --success-light: #E8F5EE;
-    --info: #1A5C9A;
-    --info-light: #E8F0FA;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --bg: #F7F4EF; --surface: #FFFFFF; --surface2: #F0EDE7;
+    --accent: #2A5C45; --accent2: #4A9B72; --accent-light: #E8F4EE;
+    --text: #1A1A1A; --text-muted: #6B6861; --text-light: #9E9A93;
+    --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.18);
+    --danger: #C0392B; --danger-light: #FDECEA;
+    --warning: #D4870A; --warning-light: #FEF6E4;
+    --success: #2A7D4F; --success-light: #E8F5EE;
+    --info: #1A5C9A; --info-light: #E8F0FA;
+    --radius: 12px; --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
-
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
   .page { display:none; min-height:100vh; }
   .page.active { display:flex; flex-direction:column; }
-
-  /* NAVBAR */
-  .navbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top:0; z-index:100;
-  }
-  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--accent); display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .navbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 2rem; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+  .nav-logo { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--accent); display:flex; align-items:center; gap:8px; cursor:pointer; }
   .nav-logo span { width:28px; height:28px; background:var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; }
   .nav-links { display:flex; align-items:center; gap:8px; }
-  .nav-btn { padding:8px 18px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; border:none; font-family:inherit; transition: all 0.15s; }
+  .nav-btn { padding:8px 18px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; border:none; font-family:inherit; transition:all 0.15s; }
   .nav-btn.outline { background:transparent; border:1.5px solid var(--border-strong); color:var(--text); }
   .nav-btn.outline:hover { background:var(--surface2); }
   .nav-btn.solid { background:var(--accent); color:#fff; }
   .nav-btn.solid:hover { background:#1e4a36; }
   .nav-user { display:flex; align-items:center; gap:12px; }
   .avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; cursor:pointer; }
-
-  /* BUTTONS */
   .btn-lg { padding:14px 32px; border-radius:10px; font-size:15px; font-weight:500; cursor:pointer; border:none; font-family:inherit; transition:all 0.15s; }
   .btn-lg.primary { background:var(--accent); color:#fff; }
   .btn-lg.primary:hover { background:#1e4a36; transform:translateY(-1px); }
@@ -75,32 +48,26 @@
   .btn-sm.outline:hover { background:var(--surface2); }
   .btn-sm.danger { background:transparent; border:1.5px solid #e74c3c; color:#e74c3c; }
   .btn-sm.danger:hover { background:var(--danger-light); }
-
-  /* FORM */
   .form-group { margin-bottom:1.1rem; }
   .form-group label { font-size:13px; font-weight:500; color:var(--text); display:block; margin-bottom:6px; }
-  .form-group input, .form-group select, .form-group textarea {
-    width:100%; padding:10px 14px; border:1.5px solid var(--border-strong); border-radius:8px;
-    font-size:14px; font-family:inherit; background:var(--surface); color:var(--text); transition:border-color 0.15s;
-  }
+  .form-group input, .form-group select, .form-group textarea { width:100%; padding:10px 14px; border:1.5px solid var(--border-strong); border-radius:8px; font-size:14px; font-family:inherit; background:var(--surface); color:var(--text); transition:border-color 0.15s; }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--accent); }
   .form-group input.error { border-color:var(--danger); }
   .field-error { font-size:12px; color:var(--danger); margin-top:4px; display:none; }
   .field-error.show { display:block; }
   .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-  /* BADGES & STATUS */
   .badge { display:inline-block; font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; margin-top:6px; }
   .badge.available { background:var(--success-light); color:var(--success); }
   .badge.resolved { background:var(--info-light); color:var(--info); }
   .badge.pending { background:var(--warning-light); color:var(--warning); }
   .status-chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:3px 10px; border-radius:100px; }
   .status-chip.available { background:var(--success-light); color:var(--success); }
+  .status-chip.claimed { background:var(--info-light); color:var(--info); }
   .status-chip.resolved { background:var(--info-light); color:var(--info); }
   .status-chip.pending { background:var(--warning-light); color:var(--warning); }
-  .status-chip.lost { background:var(--danger-light); color:var(--danger); }
-
-  /* TABLE */
+  .status-chip.searching { background:var(--danger-light); color:var(--danger); }
+  .status-chip.admin { background:#f3e8ff; color:#6b21a8; }
+  .status-chip.user { background:var(--success-light); color:var(--success); }
   .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:14px; }
   thead th { background:var(--surface2); padding:10px 14px; text-align:left; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); border-bottom:1px solid var(--border); white-space:nowrap; }
@@ -108,8 +75,6 @@
   tbody tr:last-child td { border-bottom:none; }
   tbody tr:hover { background:var(--bg); }
   .td-actions { display:flex; gap:6px; flex-wrap:wrap; }
-
-  /* CARDS */
   .metric-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1.1rem 1.2rem; }
   .metric-card .label { font-size:12px; color:var(--text-muted); font-weight:500; text-transform:uppercase; letter-spacing:0.05em; }
   .metric-card .value { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--text); margin-top:4px; }
@@ -123,8 +88,6 @@
   .item-card h3 { font-size:15px; font-weight:600; margin-bottom:4px; }
   .item-card .meta { font-size:13px; color:var(--text-muted); line-height:1.6; }
   .item-card .meta span { display:block; }
-
-  /* MISC */
   .metrics-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:2rem; }
   .items-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
   .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:1.5rem; }
@@ -133,10 +96,6 @@
   .page-header { margin-bottom:1.8rem; }
   .page-header h1 { font-family:'DM Serif Display',serif; font-size:1.6rem; }
   .page-header p { color:var(--text-muted); font-size:14px; margin-top:4px; }
-  .tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:1.5rem; }
-  .tab { padding:10px 18px; font-size:14px; font-weight:500; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.12s; background:none; border-top:none; border-left:none; border-right:none; font-family:inherit; }
-  .tab:hover { color:var(--text); }
-  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
   .empty-state { text-align:center; padding:3rem 1rem; color:var(--text-muted); }
   .empty-state .icon { font-size:40px; margin-bottom:1rem; }
   .empty-state p { font-size:14px; }
@@ -146,7 +105,7 @@
   .rt-indicator { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--success); font-weight:500; }
   .rt-dot { width:7px; height:7px; border-radius:50%; background:var(--success); animation:pulse 2s infinite; }
   .ws-ticker { background:var(--accent-light); border:1px solid #b8dfc8; border-radius:8px; padding:10px 14px; margin-bottom:1.5rem; display:flex; align-items:center; gap:10px; font-size:13px; }
-  .activity-list { display:flex; flex-direction:column; gap:0; }
+  .activity-list { display:flex; flex-direction:column; }
   .activity-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border); }
   .activity-item:last-child { border-bottom:none; }
   .activity-dot { width:8px; height:8px; border-radius:50%; margin-top:5px; flex-shrink:0; }
@@ -158,6 +117,11 @@
   .chart-container { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; }
   .chart-canvas { width:100%; height:160px; display:block; }
   .admin-chip { background:var(--accent); color:#fff; font-size:11px; font-weight:600; padding:2px 8px; border-radius:100px; margin-left:6px; }
+  .sidebar-link { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; font-size:14px; font-weight:400; color:var(--text-muted); cursor:pointer; transition:all 0.12s; text-decoration:none; }
+  .sidebar-link:hover { background:var(--surface2); color:var(--text); }
+  .sidebar-link.active { background:var(--accent-light); color:var(--accent); font-weight:500; }
+  .dashboard-layout { flex:1; display:grid; grid-template-columns:220px 1fr; min-height:0; }
+  .main-content { flex:1; overflow-y:auto; padding:2rem; }
   #toast { position:fixed; bottom:24px; right:24px; background:var(--accent); color:#fff; padding:12px 20px; border-radius:10px; font-size:14px; font-weight:500; z-index:9999; opacity:0; transform:translateY(8px); transition:all 0.25s; pointer-events:none; max-width:300px; }
   #toast.show { opacity:1; transform:translateY(0); }
   #toast.error { background:var(--danger); }
@@ -168,7 +132,7 @@
 </head>
 <body>
 
-  <!-- ══ LANDING PAGE ══ -->
+<!-- ══ LANDING ══ -->
 <div id="page-landing" class="page active">
   <nav class="navbar">
     <div class="nav-logo"><span>F</span> FindIt</div>
@@ -177,47 +141,31 @@
       <button class="nav-btn solid" onclick="showPage('page-register')">Get Started</button>
     </div>
   </nav>
-
-  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:4rem 2rem; background:linear-gradient(180deg,#F7F4EF 0%,#EEF5F1 100%);">
-    <div style="background:var(--accent-light);color:var(--accent);font-size:13px;font-weight:500;padding:6px 16px;border-radius:100px;margin-bottom:1.5rem;display:inline-block;">🏫 Reclaim Hub Lost & Found System</div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;background:linear-gradient(180deg,#F7F4EF 0%,#EEF5F1 100%);">
+    <div style="background:var(--accent-light);color:var(--accent);font-size:13px;font-weight:500;padding:6px 16px;border-radius:100px;margin-bottom:1.5rem;display:inline-block;">🏫 Campus Lost & Found System</div>
     <h1 style="font-family:'DM Serif Display',serif;font-size:3.2rem;line-height:1.15;margin-bottom:1.25rem;max-width:600px;">Lost something? <span style="color:var(--accent);">We'll help you find it.</span></h1>
     <p style="font-size:1.05rem;color:var(--text-muted);max-width:480px;line-height:1.7;margin-bottom:2.5rem;">Report lost items, browse found items, and connect with the right people — all in one place.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <button class="btn-lg primary" onclick="showPage('page-register')">Report a Lost Item</button>
       <button class="btn-lg ghost" onclick="showPage('page-login')">Browse Found Items</button>
     </div>
-    <div style="display:flex;gap:40px;margin-top:3.5rem;justify-content:center;flex-wrap:wrap;">
-      <div style="text-align:center;"><strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">128</strong><span style="font-size:13px;color:var(--text-muted);">Items Reported</span></div>
-      <div style="text-align:center;"><strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">94</strong><span style="font-size:13px;color:var(--text-muted);">Items Resolved</span></div>
-      <div style="text-align:center;"><strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">2</strong><span style="font-size:13px;color:var(--text-muted);">Active Admins</span></div>
+    <div style="display:flex;gap:40px;margin-top:3.5rem;justify-content:center;flex-wrap:wrap;" id="landing-stats">
+      <div style="text-align:center;"><strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">—</strong><span style="font-size:13px;color:var(--text-muted);">Items Reported</span></div>
+      <div style="text-align:center;"><strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">—</strong><span style="font-size:13px;color:var(--text-muted);">Items Resolved</span></div>
     </div>
   </div>
-
   <div style="padding:3rem 2rem;background:var(--surface);border-top:1px solid var(--border);">
     <h2 style="font-family:'DM Serif Display',serif;font-size:1.8rem;text-align:center;margin-bottom:0.5rem;">Recent Found Items</h2>
     <p style="text-align:center;color:var(--text-muted);font-size:14px;margin-bottom:2rem;">Log in or register to view full details and report your lost items.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:900px;margin:0 auto;">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🧴</div>
-        <div><h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Black Tumbler w/ Keychain</h3><p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Found near Roundball Isulan court on Dec 10, 2025</p><span class="badge available">Available</span></div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔢</div>
-        <div><h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Calculator — Pink Case</h3><p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Found at the Office on Nov 27, 2025</p><span class="badge available">Available</span></div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">👜</div>
-        <div><h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Canvas Tote Bag</h3><p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Beige with a picture of cat — near BDO</p><span class="badge resolved">Resolved</span></div>
-      </div>
+    <div id="landing-found-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:900px;margin:0 auto;">
+      <p style="text-align:center;color:var(--text-muted);font-size:14px;">Loading...</p>
     </div>
   </div>
 </div>
 
-<!-- ══ LOGIN PAGE ══ -->
+<!-- ══ LOGIN ══ -->
 <div id="page-login" class="page">
-  <nav class="navbar">
-    <div class="nav-logo" onclick="showPage('page-landing')"><span>F</span> FindIt</div>
-  </nav>
+  <nav class="navbar"><div class="nav-logo" onclick="showPage('page-landing')"><span>F</span> FindIt</div></nav>
   <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg);">
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;width:100%;max-width:420px;">
       <h2 style="font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:0.4rem;">Welcome back</h2>
@@ -236,54 +184,25 @@
       <div style="text-align:center;margin-top:1.2rem;font-size:14px;color:var(--text-muted);">
         Don't have an account? <a style="color:var(--accent);text-decoration:none;font-weight:500;cursor:pointer;" onclick="showPage('page-register')">Create one</a>
       </div>
-      <div style="text-align:center;margin-top:8px;font-size:14px;color:var(--text-muted);">
-        Admin? <a style="color:var(--accent);text-decoration:none;font-weight:500;cursor:pointer;" onclick="doAdminLogin()">Log in as Admin (demo)</a>
-      </div>
     </div>
   </div>
 </div>
 
-<!-- ══ REGISTER PAGE ══ -->
+<!-- ══ REGISTER ══ -->
 <div id="page-register" class="page">
-  <nav class="navbar">
-    <div class="nav-logo" onclick="showPage('page-landing')"><span>F</span> FindIt</div>
-  </nav>
+  <nav class="navbar"><div class="nav-logo" onclick="showPage('page-landing')"><span>F</span> FindIt</div></nav>
   <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg);">
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;width:100%;max-width:420px;">
       <h2 style="font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:0.4rem;">Create your account</h2>
       <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.8rem;">Join FindIt to report and browse lost items</p>
       <div class="form-row">
-        <div class="form-group">
-          <label>First Name</label>
-          <input type="text" id="reg-fname" placeholder="Maria"/>
-          <div class="field-error" id="reg-fname-err">Required.</div>
-        </div>
-        <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" id="reg-lname" placeholder="Santos"/>
-          <div class="field-error" id="reg-lname-err">Required.</div>
-        </div>
+        <div class="form-group"><label>First Name</label><input type="text" id="reg-fname" placeholder="Maria"/><div class="field-error" id="reg-fname-err">Required.</div></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="reg-lname" placeholder="Santos"/><div class="field-error" id="reg-lname-err">Required.</div></div>
       </div>
-      <div class="form-group">
-        <label>Email address</label>
-        <input type="email" id="reg-email" placeholder="you@school.edu"/>
-        <div class="field-error" id="reg-email-err">Enter a valid email.</div>
-      </div>
-      <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" id="reg-phone" placeholder="09XX XXX XXXX"/>
-        <div class="field-error" id="reg-phone-err">Enter a valid phone.</div>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="reg-pass" placeholder="Min. 8 characters"/>
-        <div class="field-error" id="reg-pass-err">Min. 8 characters required.</div>
-      </div>
-      <div class="form-group">
-        <label>Confirm Password</label>
-        <input type="password" id="reg-pass2" placeholder="••••••••"/>
-        <div class="field-error" id="reg-pass2-err">Passwords do not match.</div>
-      </div>
+      <div class="form-group"><label>Email address</label><input type="email" id="reg-email" placeholder="you@school.edu"/><div class="field-error" id="reg-email-err">Enter a valid email.</div></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="reg-phone" placeholder="09XX XXX XXXX"/><div class="field-error" id="reg-phone-err">Enter a valid phone.</div></div>
+      <div class="form-group"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 8 characters"/><div class="field-error" id="reg-pass-err">Min. 8 characters required.</div></div>
+      <div class="form-group"><label>Confirm Password</label><input type="password" id="reg-pass2" placeholder="••••••••"/><div class="field-error" id="reg-pass2-err">Passwords do not match.</div></div>
       <button class="btn-full" onclick="doRegister()">Create Account</button>
       <div style="text-align:center;margin-top:1.2rem;font-size:14px;color:var(--text-muted);">
         Already have an account? <a style="color:var(--accent);text-decoration:none;font-weight:500;cursor:pointer;" onclick="showPage('page-login')">Log in</a>
@@ -298,32 +217,21 @@
     <div class="nav-logo"><span>F</span> FindIt</div>
     <div class="nav-user">
       <div class="rt-indicator"><div class="rt-dot"></div> Live</div>
-      <div class="avatar" id="user-avatar">MS</div>
+      <div class="avatar" id="user-avatar">?</div>
       <button class="nav-btn outline" onclick="doLogout()">Logout</button>
     </div>
   </nav>
-  <div style="flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0;" class="dashboard-layout">
+  <div class="dashboard-layout">
     <aside class="sidebar" style="background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">Menu</div>
-      <a class="sidebar-link active" onclick="switchTab('user','overview',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">📊</span> Overview
-      </a>
-      <a class="sidebar-link" onclick="switchTab('user','found',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">🔍</span> Found Items
-      </a>
-      <a class="sidebar-link" onclick="switchTab('user','lost',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">📋</span> Lost Items
-        <span id="user-lost-badge" style="margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:1px 7px;border-radius:100px;">4</span>
-      </a>
-      <a class="sidebar-link" onclick="switchTab('user','myreports',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">📝</span> My Reports
-      </a>
+      <a class="sidebar-link active" onclick="switchTab('user','overview',this)"><span style="font-size:16px;width:20px;text-align:center;">📊</span> Overview</a>
+      <a class="sidebar-link" onclick="switchTab('user','found',this)"><span style="font-size:16px;width:20px;text-align:center;">🔍</span> Found Items</a>
+      <a class="sidebar-link" onclick="switchTab('user','lost',this)"><span style="font-size:16px;width:20px;text-align:center;">📋</span> Lost Items <span id="user-lost-badge" style="margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:1px 7px;border-radius:100px;">0</span></a>
+      <a class="sidebar-link" onclick="switchTab('user','myreports',this)"><span style="font-size:16px;width:20px;text-align:center;">📝</span> My Reports</a>
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">Account</div>
-      <a class="sidebar-link" onclick="switchTab('user','profile',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">👤</span> Profile
-      </a>
+      <a class="sidebar-link" onclick="switchTab('user','profile',this)"><span style="font-size:16px;width:20px;text-align:center;">👤</span> Profile</a>
     </aside>
-    <main class="main-content" id="user-main" style="flex:1;overflow-y:auto;padding:2rem;"></main>
+    <main class="main-content" id="user-main"></main>
   </div>
 </div>
 
@@ -333,71 +241,39 @@
     <div class="nav-logo"><span>F</span> FindIt <span class="admin-chip">Admin</span></div>
     <div class="nav-user">
       <div class="rt-indicator"><div class="rt-dot"></div> Live</div>
-      <div class="avatar" style="background:#8B2FC9;">AD</div>
+      <div class="avatar" style="background:#8B2FC9;" id="admin-avatar">AD</div>
       <button class="nav-btn outline" onclick="doLogout()">Logout</button>
     </div>
   </nav>
-  <div style="flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0;" class="dashboard-layout">
+  <div class="dashboard-layout">
     <aside class="sidebar" style="background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">Management</div>
-      <a class="sidebar-link active" onclick="switchTab('admin','overview',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">📊</span> Dashboard
-      </a>
-      <a class="sidebar-link" onclick="switchTab('admin','found-mgmt',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">📦</span> Found Items
-      </a>
-      <a class="sidebar-link" onclick="switchTab('admin','lost-mgmt',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">📋</span> Lost Items
-      </a>
+      <a class="sidebar-link active" onclick="switchTab('admin','overview',this)"><span style="font-size:16px;width:20px;text-align:center;">📊</span> Dashboard</a>
+      <a class="sidebar-link" onclick="switchTab('admin','found-mgmt',this)"><span style="font-size:16px;width:20px;text-align:center;">📦</span> Found Items</a>
+      <a class="sidebar-link" onclick="switchTab('admin','lost-mgmt',this)"><span style="font-size:16px;width:20px;text-align:center;">📋</span> Lost Items</a>
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);padding:0 8px;margin-top:1rem;margin-bottom:4px;">System</div>
-      <a class="sidebar-link" onclick="switchTab('admin','audit',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">🕵️</span> Audit Trail
-      </a>
-      <a class="sidebar-link" onclick="switchTab('admin','users',this)">
-        <span style="font-size:16px;width:20px;text-align:center;">👥</span> Users
-      </a>
+      <a class="sidebar-link" onclick="switchTab('admin','audit',this)"><span style="font-size:16px;width:20px;text-align:center;">🕵️</span> Audit Trail</a>
+      <a class="sidebar-link" onclick="switchTab('admin','users',this)"><span style="font-size:16px;width:20px;text-align:center;">👥</span> Users</a>
     </aside>
-    <main class="main-content" id="admin-main" style="flex:1;overflow-y:auto;padding:2rem;"></main>
+    <main class="main-content" id="admin-main"></main>
   </div>
 </div>
 
-<!-- ══ REPORT LOST ITEM MODAL ══ -->
-<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-report" class="modal-overlay">
+<!-- ══ REPORT LOST MODAL ══ -->
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-report">
   <div style="background:var(--surface);border-radius:var(--radius);padding:2rem;width:100%;max-width:560px;position:relative;box-shadow:var(--shadow-lg);margin:auto;">
-    <button onclick="closeModal('modal-report')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px;border-radius:6px;">✕</button>
+    <button onclick="closeModal('modal-report')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);">✕</button>
     <h2 style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:0.4rem;">Report a Lost Item</h2>
-    <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Fill in the details below. We'll help connect you with the right person.</p>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Fill in the details below.</p>
     <div class="form-row">
-      <div class="form-group">
-        <label>Your Name <span style="color:var(--danger)">*</span></label>
-        <input type="text" id="r-name" placeholder="Full name"/>
-        <div class="field-error" id="r-name-err">Required.</div>
-      </div>
-      <div class="form-group">
-        <label>Item Name <span style="color:var(--danger)">*</span></label>
-        <input type="text" id="r-item" placeholder="e.g. Blue Backpack"/>
-        <div class="field-error" id="r-item-err">Required.</div>
-      </div>
+      <div class="form-group"><label>Item Name <span style="color:var(--danger)">*</span></label><input type="text" id="r-item" placeholder="e.g. Blue Backpack"/><div class="field-error" id="r-item-err">Required.</div></div>
+      <div class="form-group"><label>Date Lost <span style="color:var(--danger)">*</span></label><input type="date" id="r-date"/><div class="field-error" id="r-date-err">Required.</div></div>
     </div>
-    <div class="form-group">
-      <label>Description <span style="color:var(--danger)">*</span></label>
-      <textarea id="r-desc" rows="3" placeholder="Describe the item — color, brand, markings..."></textarea>
-      <div class="field-error" id="r-desc-err">Please provide a description.</div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Date Lost <span style="color:var(--danger)">*</span></label>
-        <input type="date" id="r-date"/>
-        <div class="field-error" id="r-date-err">Required.</div>
-      </div>
-      <div class="form-group">
-        <label>Location (text)</label>
-        <input type="text" id="r-location" placeholder="e.g. Cafeteria"/>
-      </div>
-    </div>
+    <div class="form-group"><label>Description <span style="color:var(--danger)">*</span></label><textarea id="r-desc" rows="3" placeholder="Describe the item — color, brand, markings..."></textarea><div class="field-error" id="r-desc-err">Required.</div></div>
+    <div class="form-group"><label>Location (text)</label><input type="text" id="r-location" placeholder="e.g. Cafeteria"/></div>
     <div class="form-group">
       <label>Picture (optional)</label>
-      <div style="border:1.5px dashed var(--border-strong);border-radius:8px;padding:1.2rem;text-align:center;cursor:pointer;transition:all 0.15s;" onclick="document.getElementById('r-photo').click()">
+      <div style="border:1.5px dashed var(--border-strong);border-radius:8px;padding:1.2rem;text-align:center;cursor:pointer;" onclick="document.getElementById('r-photo').click()">
         <p style="font-size:13px;color:var(--text-muted);">📷 Click to upload a photo</p>
         <span style="font-size:12px;color:var(--text-light);display:block;margin-top:4px;">JPEG, PNG — max 5MB</span>
         <input type="file" id="r-photo" accept="image/*" style="display:none" onchange="previewImg(this)"/>
@@ -407,7 +283,7 @@
     <div class="form-group">
       <label>📍 Pin Location on Map</label>
       <div id="report-map" style="height:220px;border-radius:8px;border:1.5px solid var(--border-strong);margin-top:6px;"></div>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Click anywhere on the map to drop a pin at the exact location.</p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Click anywhere on the map to drop a pin.</p>
       <p style="font-size:12px;color:var(--accent);font-weight:500;margin-top:4px;" id="map-coords"></p>
     </div>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
@@ -418,22 +294,15 @@
 </div>
 
 <!-- ══ EDIT STATUS MODAL ══ -->
-<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-status" class="modal-overlay">
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-status">
   <div style="background:var(--surface);border-radius:var(--radius);padding:2rem;width:100%;max-width:360px;position:relative;box-shadow:var(--shadow-lg);margin:auto;">
-    <button onclick="closeModal('modal-status')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px;border-radius:6px;">✕</button>
+    <button onclick="closeModal('modal-status')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);">✕</button>
     <h2 style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:0.4rem;">Edit Item Status</h2>
     <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Update the status of this lost item.</p>
-    <div class="form-group">
-      <label>Item</label>
-      <input type="text" id="status-item-name" readonly style="background:var(--surface2);"/>
-    </div>
+    <div class="form-group"><label>Item</label><input type="text" id="status-item-name" readonly style="background:var(--surface2);"/></div>
     <div class="form-group">
       <label>Status <span style="color:var(--danger)">*</span></label>
-      <select id="status-select">
-        <option value="Pending">Pending</option>
-        <option value="Resolved">Resolved</option>
-        <option value="Searching">Searching</option>
-      </select>
+      <select id="status-select"><option value="Pending">Pending</option><option value="Resolved">Resolved</option><option value="Searching">Searching</option></select>
     </div>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
       <button class="btn-sm outline" onclick="closeModal('modal-status')">Cancel</button>
@@ -443,40 +312,18 @@
 </div>
 
 <!-- ══ ADD/EDIT FOUND ITEM MODAL ══ -->
-<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-found" class="modal-overlay">
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;" id="modal-found">
   <div style="background:var(--surface);border-radius:var(--radius);padding:2rem;width:100%;max-width:560px;position:relative;box-shadow:var(--shadow-lg);margin:auto;">
-    <button onclick="closeModal('modal-found')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px;border-radius:6px;">✕</button>
+    <button onclick="closeModal('modal-found')" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);">✕</button>
     <h2 id="found-modal-title" style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:0.4rem;">Post Found Item</h2>
     <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">Add details about the item you found.</p>
     <div class="form-row">
-      <div class="form-group">
-        <label>Item Name <span style="color:var(--danger)">*</span></label>
-        <input type="text" id="f-name" placeholder="e.g. Umbrella"/>
-        <div class="field-error" id="f-name-err">Required.</div>
-      </div>
-      <div class="form-group">
-        <label>Date Found <span style="color:var(--danger)">*</span></label>
-        <input type="date" id="f-date"/>
-        <div class="field-error" id="f-date-err">Required.</div>
-      </div>
+      <div class="form-group"><label>Item Name <span style="color:var(--danger)">*</span></label><input type="text" id="f-name" placeholder="e.g. Umbrella"/><div class="field-error" id="f-name-err">Required.</div></div>
+      <div class="form-group"><label>Date Found <span style="color:var(--danger)">*</span></label><input type="date" id="f-date"/><div class="field-error" id="f-date-err">Required.</div></div>
     </div>
-    <div class="form-group">
-      <label>Description <span style="color:var(--danger)">*</span></label>
-      <textarea id="f-desc" rows="2" placeholder="Color, brand, condition..."></textarea>
-      <div class="field-error" id="f-desc-err">Required.</div>
-    </div>
-    <div class="form-group">
-      <label>Location <span style="color:var(--danger)">*</span></label>
-      <input type="text" id="f-loc" placeholder="Where was it found?"/>
-      <div class="field-error" id="f-loc-err">Required.</div>
-    </div>
-    <div class="form-group">
-      <label>Status</label>
-      <select id="f-status">
-        <option value="Available">Available</option>
-        <option value="Claimed">Claimed</option>
-      </select>
-    </div>
+    <div class="form-group"><label>Description <span style="color:var(--danger)">*</span></label><textarea id="f-desc" rows="2" placeholder="Color, brand, condition..."></textarea><div class="field-error" id="f-desc-err">Required.</div></div>
+    <div class="form-group"><label>Location <span style="color:var(--danger)">*</span></label><input type="text" id="f-loc" placeholder="Where was it found?"/><div class="field-error" id="f-loc-err">Required.</div></div>
+    <div class="form-group"><label>Status</label><select id="f-status"><option value="Available">Available</option><option value="Claimed">Claimed</option></select></div>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
       <button class="btn-sm outline" onclick="closeModal('modal-found')">Cancel</button>
       <button class="btn-sm primary" onclick="submitFoundItem()">Save Item</button>
@@ -484,78 +331,109 @@
   </div>
 </div>
 
-<!-- ══ ALL JAVASCRIPT ══ -->
+<div id="toast"></div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
 const API = 'http://localhost:3000/api';
 let TOKEN = localStorage.getItem('findit_token') || null;
 
+// ── Runtime state (always from API, never hardcoded) ──────
+let currentUser  = null;
+let foundItems   = [];
+let lostItems    = [];
+let activityFeed = [];
+let reportMap    = null;
+let reportMarker = null;
+let editingFoundId = null;
+let editingLostId  = null;
+
 function apiHeaders() {
-  return { 'Content-Type': 'application/json', ...(TOKEN ? { 'Authorization': `Bearer ${TOKEN}` } : {}) };
+  return {
+    'Content-Type': 'application/json',
+    ...(TOKEN ? { 'Authorization': `Bearer ${TOKEN}` } : {})
+  };
 }
 
-// Override doLogin to call real API
-async function doLogin() {
-  let ok = true;
-  ok = validateField('login-email','login-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
-  ok = validateField('login-pass','login-pass-err', v => v.length > 0) && ok;
-  if (!ok) return;
+// ═══════════════════════════════════════════════════════════
+//  WEBSOCKET
+// ═══════════════════════════════════════════════════════════
+function connectWS() {
+  const ws = new WebSocket('ws://localhost:3000');
+  ws.onopen = () => console.log('🔌 WebSocket connected to FindIt server');
 
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
+  ws.onmessage = (msg) => {
+    const { event, data } = JSON.parse(msg.data);
+    console.log('📡 WS event:', event, data);
 
-  try {
-    const res  = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password: pass }) });
-    const data = await res.json();
-    if (!data.success) { showToast(data.message, true); return; }
+    if (['found_item_created','found_item_updated','found_item_deleted'].includes(event)) {
+      loadFoundItems().then(() => {
+        const tbody = document.getElementById('found-table-body');
+        if (tbody) tbody.innerHTML = renderFoundRows();
+        const grid = document.getElementById('found-grid');
+        if (grid) grid.innerHTML = renderFoundCards();
+      });
+    }
 
-    TOKEN = data.token;
-    localStorage.setItem('findit_token', TOKEN);
-    currentUser = data.user;
-    loginAs(data.user);
-  } catch (e) {
-    showToast('Cannot reach server. Is it running?', true);
-  }
+    if (['lost_item_created','lost_item_updated','lost_item_deleted','lost_item_status_updated'].includes(event)) {
+      loadLostItems().then(() => {
+        const tbody = document.getElementById('lost-table-body');
+        if (tbody) tbody.innerHTML = renderLostRows();
+        updateLostBadge();
+      });
+    }
+
+    if (event === 'audit_log') {
+      activityFeed.unshift({ type:'blue', text:`${data.username}: ${data.action}`, time:'just now' });
+      if (activityFeed.length > 10) activityFeed.pop();
+      const feed = document.getElementById('activity-feed');
+      if (feed) feed.innerHTML = renderActivityFeed();
+    }
+  };
+
+  ws.onclose = () => {
+    console.log('🔌 WS disconnected — retrying in 3s');
+    setTimeout(connectWS, 3000);
+  };
 }
 
-async function doRegister() {
-  let ok = true;
-  ok = validateField('reg-fname','reg-fname-err', v => v.length > 0) && ok;
-  ok = validateField('reg-lname','reg-lname-err', v => v.length > 0) && ok;
-  ok = validateField('reg-email','reg-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
-  ok = validateField('reg-phone','reg-phone-err', v => v.length >= 7) && ok;
-  ok = validateField('reg-pass','reg-pass-err', v => v.length >= 8) && ok;
-  const pass = document.getElementById('reg-pass').value;
-  const pass2 = document.getElementById('reg-pass2').value;
-  if (pass !== pass2) { document.getElementById('reg-pass2').classList.add('error'); document.getElementById('reg-pass2-err').classList.add('show'); ok = false; }
-  if (!ok) return;
-
-  try {
-    const res  = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ first_name: document.getElementById('reg-fname').value.trim(), last_name: document.getElementById('reg-lname').value.trim(), email: document.getElementById('reg-email').value.trim(), phone: document.getElementById('reg-phone').value.trim(), password: pass }) });
-    const data = await res.json();
-    if (!data.success) { showToast(data.message, true); return; }
-    showToast('Account created! Please log in.');
-    showPage('page-login');
-  } catch (e) {
-    showToast('Cannot reach server. Is it running?', true);
-  }
-}
-
+// ═══════════════════════════════════════════════════════════
+//  API CALLS
+// ═══════════════════════════════════════════════════════════
 async function loadFoundItems() {
   try {
     const res  = await fetch(`${API}/found`, { headers: apiHeaders() });
     const data = await res.json();
-    if (data.success) foundItems = data.data.map(i => ({ ...i, name: i.item_name, desc: i.description, dateFound: i.date_found }));
-  } catch (e) { console.warn('Could not load found items'); }
+    if (data.success) {
+      foundItems = data.data.map(i => ({
+        ...i,
+        name     : i.item_name,
+        desc     : i.description,
+        dateFound: i.date_found
+      }));
+    }
+  } catch (e) { console.warn('Could not load found items:', e.message); }
 }
 
 async function loadLostItems() {
   try {
     const res  = await fetch(`${API}/lost`, { headers: apiHeaders() });
     const data = await res.json();
-    if (data.success) lostItems = data.data.map(i => ({ ...i, name: i.item_name, desc: i.description, dateLost: i.date_lost, user: i.reporter_name || 'Unknown' }));
-  } catch (e) { console.warn('Could not load lost items'); }
+    if (data.success) {
+      lostItems = data.data.map(i => ({
+        ...i,
+        name    : i.item_name,
+        desc    : i.description,
+        dateLost: i.date_lost,
+        user    : i.reporter_name || 'Unknown',
+        lat     : i.latitude  ? parseFloat(i.latitude)  : null,
+        lng     : i.longitude ? parseFloat(i.longitude) : null
+      }));
+    }
+  } catch (e) { console.warn('Could not load lost items:', e.message); }
 }
 
 async function loadStats() {
@@ -566,66 +444,46 @@ async function loadStats() {
   } catch (e) { return null; }
 }
 
-// WebSocket connection
-function connectWS() {
-  const ws = new WebSocket('ws://localhost:3000');
-  ws.onopen = () => console.log('🔌 WebSocket connected');
-  ws.onmessage = (msg) => {
-    const { event, data } = JSON.parse(msg.data);
-    console.log('📡 WS event:', event, data);
-    // Refresh data on any CRUD event
-    if (['found_item_created','found_item_updated','found_item_deleted'].includes(event)) loadFoundItems();
-    if (['lost_item_created','lost_item_updated','lost_item_deleted','lost_item_status_updated'].includes(event)) loadLostItems();
-    if (event === 'audit_log') activityFeed.unshift({ type:'blue', text: `${data.username}: ${data.action}`, time:'just now' });
-  };
-  ws.onclose = () => setTimeout(connectWS, 3000); // auto-reconnect
+async function loadAuditLog() {
+  try {
+    const res  = await fetch(`${API}/audit`, { headers: apiHeaders() });
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch (e) { return []; }
 }
 
-connectWS();
+async function loadUsers() {
+  try {
+    const res  = await fetch(`${API}/users`, { headers: apiHeaders() });
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch (e) { return []; }
+}
 
-// ── STATE ──
-let currentUser = null;
-let reportMap = null;
-let reportMarker = null;
-let editingFoundId = null;
-let editingLostId = null;
+// Load public landing page found items (no token needed)
+async function loadLandingData() {
+  try {
+    const res  = await fetch(`${API}/found`);
+    const data = await res.json();
+    if (!data.success) return;
+    const items = data.data.slice(0, 3);
+    document.getElementById('landing-found-grid').innerHTML = items.map(i => `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📦</div>
+        <div>
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">${i.item_name}</h3>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">${i.description} — ${i.location}</p>
+          <span class="badge ${i.status.toLowerCase()}">${i.status}</span>
+        </div>
+      </div>`).join('');
+  } catch (e) {
+    document.getElementById('landing-found-grid').innerHTML = '<p style="text-align:center;color:var(--text-muted);font-size:14px;">Could not load items. Is the server running?</p>';
+  }
+}
 
-const users = [
-  { id:1, name:'Maria Santos', email:'maria@school.edu', password:'password123', role:'user', avatar:'MS' },
-  { id:2, name:'Juan Dela Cruz', email:'juan@school.edu', password:'password123', role:'user', avatar:'JD' },
-  { id:3, name:'Admin User', email:'admin@school.edu', password:'admin123', role:'admin', avatar:'AD' },
-];
-
-let foundItems = [
-  { id:1, name:'Black Tumbler', desc:'with key chain', dateFound:'2025-12-10', location:'Roundball Isulan', status:'Available', postedBy:'Admin' },
-  { id:2, name:'Calculator', desc:'with pink case', dateFound:'2025-11-27', location:'Office', status:'Available', postedBy:'Admin' },
-  { id:3, name:'USB Drive', desc:'Sandisk 32GB, blue', dateFound:'2025-11-15', location:'Library', status:'Available', postedBy:'Admin' },
-  { id:4, name:'Water Bottle', desc:'Green Hydro Flask', dateFound:'2025-11-10', location:'Gymnasium', status:'Available', postedBy:'Admin' },
-];
-
-let lostItems = [
-  { id:1, name:'Canvas Tote Bag', user:'lilis', desc:'beige with a picture of cat', dateLost:'2025-12-11', location:'BDO', status:'Resolved', lat:6.9214, lng:122.0790 },
-  { id:2, name:'Phone', user:'rizal', desc:'gggg', dateLost:'2025-11-28', location:'biwang', status:'Resolved', lat:null, lng:null },
-  { id:3, name:'Laptop Acer i5', user:'rizal', desc:'with huge sticker at the monitor', dateLost:'2025-11-28', location:'Roundball Isulan', status:'Resolved', lat:6.9210, lng:122.0784 },
-  { id:4, name:'Blue Backpack', user:'maria', desc:'Nike backpack, has keychain attached', dateLost:'2025-12-05', location:'Canteen', status:'Pending', lat:6.9218, lng:122.0795 },
-];
-
-let auditLog = [
-  { who:'Admin', action:'Posted found item: Black Tumbler', time:'2025-12-10 09:14' },
-  { who:'lilis', action:'Reported lost item: Canvas Tote Bag', time:'2025-12-11 11:32' },
-  { who:'Admin', action:'Marked Canvas Tote Bag as Resolved', time:'2025-12-13 14:05' },
-  { who:'rizal', action:'Reported lost item: Laptop Acer i5', time:'2025-11-28 08:22' },
-  { who:'Admin', action:'Posted found item: Calculator', time:'2025-11-27 10:00' },
-];
-
-let activityFeed = [
-  { type:'green', text:'Canvas Tote Bag marked as Resolved', time:'2 hrs ago' },
-  { type:'blue', text:'New found item posted: USB Drive', time:'4 hrs ago' },
-  { type:'amber', text:'Blue Backpack reported lost by Maria', time:'6 hrs ago' },
-  { type:'green', text:'Phone successfully resolved', time:'1 day ago' },
-];
-
-// ── NAVIGATION ──
+// ═══════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -633,45 +491,57 @@ function showPage(id) {
 }
 
 function switchTab(panel, tab, el) {
-  const links = document.querySelectorAll(`#page-${panel} .sidebar-link`);
-  links.forEach(l => l.classList.remove('active'));
+  document.querySelectorAll(`#page-${panel} .sidebar-link`).forEach(l => l.classList.remove('active'));
   if (el) el.classList.add('active');
-  if (panel === 'user') renderUserTab(tab);
-  else renderAdminTab(tab);
+  if (panel === 'user')  renderUserTab(tab);
+  else                   renderAdminTab(tab);
 }
 
-// ── AUTH ──
+// ═══════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════
 function validateField(id, errId, validator) {
   const val = document.getElementById(id).value.trim();
-  const err = document.getElementById(errId);
-  const ok = validator(val);
+  const ok  = validator(val);
   document.getElementById(id).classList.toggle('error', !ok);
-  err.classList.toggle('show', !ok);
+  document.getElementById(errId).classList.toggle('show', !ok);
   return ok;
 }
 
-function doLogin() {
+async function doLogin() {
   let ok = true;
   ok = validateField('login-email','login-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
-  ok = validateField('login-pass','login-pass-err', v => v.length > 0) && ok;
+  ok = validateField('login-pass','login-pass-err',   v => v.length > 0) && ok;
   if (!ok) return;
-  const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const user = users.find(u => u.email === email && u.password === pass);
-  if (!user) { showToast('Invalid email or password.', true); return; }
-  loginAs(user);
+
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-pass').value;
+
+  try {
+    const res  = await fetch(`${API}/auth/login`, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+
+    TOKEN = data.token;
+    localStorage.setItem('findit_token', TOKEN);
+    await loginAs(data.user);
+  } catch (e) {
+    showToast('Cannot reach server. Is node server.js running?', true);
+  }
 }
 
-function doAdminLogin() { loginAs(users.find(u => u.role === 'admin')); }
-
-function doRegister() {
+async function doRegister() {
   let ok = true;
   ok = validateField('reg-fname','reg-fname-err', v => v.length > 0) && ok;
   ok = validateField('reg-lname','reg-lname-err', v => v.length > 0) && ok;
   ok = validateField('reg-email','reg-email-err', v => /\S+@\S+\.\S+/.test(v)) && ok;
   ok = validateField('reg-phone','reg-phone-err', v => v.length >= 7) && ok;
-  ok = validateField('reg-pass','reg-pass-err', v => v.length >= 8) && ok;
-  const pass = document.getElementById('reg-pass').value;
+  ok = validateField('reg-pass','reg-pass-err',   v => v.length >= 8) && ok;
+  const pass  = document.getElementById('reg-pass').value;
   const pass2 = document.getElementById('reg-pass2').value;
   if (pass !== pass2) {
     document.getElementById('reg-pass2').classList.add('error');
@@ -679,47 +549,80 @@ function doRegister() {
     ok = false;
   }
   if (!ok) return;
-  const fname = document.getElementById('reg-fname').value.trim();
-  const lname = document.getElementById('reg-lname').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const newUser = { id:users.length+1, name:fname+' '+lname, email, password:pass, role:'user', avatar:(fname[0]+lname[0]).toUpperCase() };
-  users.push(newUser);
-  loginAs(newUser);
-  showToast('Account created! Welcome to FindIt.');
+
+  try {
+    const res  = await fetch(`${API}/auth/register`, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({
+        first_name: document.getElementById('reg-fname').value.trim(),
+        last_name : document.getElementById('reg-lname').value.trim(),
+        email     : document.getElementById('reg-email').value.trim(),
+        phone     : document.getElementById('reg-phone').value.trim(),
+        password  : pass
+      })
+    });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+    showToast('Account created! Please log in.');
+    showPage('page-login');
+  } catch (e) {
+    showToast('Cannot reach server. Is node server.js running?', true);
+  }
 }
 
-function loginAs(user) {
- async function loginAs(user) {
+async function loginAs(user) {
   currentUser = user;
+  showToast(`Welcome, ${user.name}!`);
+
+  // Load data from API before rendering
   await loadFoundItems();
   await loadLostItems();
+
   if (user.role === 'admin') {
+    const initials = user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById('admin-avatar').textContent = initials;
     showPage('page-admin');
     renderAdminTab('overview');
   } else {
-    document.getElementById('user-avatar').textContent = (user.name || user.email)[0].toUpperCase() + (user.name?.split(' ')[1]?.[0] || '');
+    const initials = user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById('user-avatar').textContent = initials;
     showPage('page-user');
     renderUserTab('overview');
   }
-}
+  updateLostBadge();
 }
 
-function doLogout() { currentUser = null; showPage('page-landing'); }
+function doLogout() {
+  currentUser = null;
+  TOKEN = null;
+  localStorage.removeItem('findit_token');
+  foundItems = [];
+  lostItems  = [];
+  showPage('page-landing');
+}
 
-// ── USER TAB RENDERERS ──
+function updateLostBadge() {
+  const badge = document.getElementById('user-lost-badge');
+  if (badge) badge.textContent = lostItems.filter(i => i.status === 'Pending').length;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  USER TABS
+// ═══════════════════════════════════════════════════════════
 function renderUserTab(tab) {
   const main = document.getElementById('user-main');
-  if (tab === 'overview')   main.innerHTML = userOverviewHTML();
-  else if (tab === 'found') main.innerHTML = userFoundHTML();
-  else if (tab === 'lost')  main.innerHTML = userLostHTML();
-  else if (tab === 'myreports') main.innerHTML = myReportsHTML();
-  else if (tab === 'profile')   main.innerHTML = profileHTML();
-  simulateChart();
+  if      (tab === 'overview')   main.innerHTML = userOverviewHTML();
+  else if (tab === 'found')      main.innerHTML = userFoundHTML();
+  else if (tab === 'lost')       main.innerHTML = userLostHTML();
+  else if (tab === 'myreports')  main.innerHTML = myReportsHTML();
+  else if (tab === 'profile')    main.innerHTML = profileHTML();
+  drawChart();
 }
 
 function userOverviewHTML() {
-  const pending = lostItems.filter(i=>i.status==='Pending').length;
-  const resolved = lostItems.filter(i=>i.status==='Resolved').length;
+  const pending  = lostItems.filter(i => i.status === 'Pending').length;
+  const resolved = lostItems.filter(i => i.status === 'Resolved').length;
   return `
   <div class="page-header"><h1>Welcome back, ${currentUser.name.split(' ')[0]} 👋</h1><p>Here's what's happening right now.</p></div>
   <div class="ws-ticker"><div class="rt-dot"></div><span><strong>Live:</strong> WebSocket connected — updates are real-time.</span></div>
@@ -732,15 +635,11 @@ function userOverviewHTML() {
   <div class="two-col">
     <div>
       <div class="section-header"><h2>Activity Feed</h2><div class="rt-indicator"><div class="rt-dot"></div> Live</div></div>
-      <div class="table-wrap" style="padding:0 1rem;">
-        <div class="activity-list">
-          ${activityFeed.map(a=>`<div class="activity-item"><div class="activity-dot ${a.type}"></div><div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`).join('')}
-        </div>
-      </div>
+      <div class="table-wrap" style="padding:0 1rem;"><div class="activity-list" id="activity-feed">${renderActivityFeed()}</div></div>
     </div>
     <div>
       <div class="section-header"><h2>Monthly Reports</h2></div>
-      <div class="chart-container"><canvas id="overview-chart" class="chart-canvas"></canvas><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Lost vs Found — last 6 months</p></div>
+      <div class="chart-container"><canvas id="overview-chart" class="chart-canvas"></canvas></div>
     </div>
   </div>
   <div class="section-header"><h2>Quick Actions</h2></div>
@@ -754,17 +653,20 @@ function userFoundHTML() {
   return `
   <div class="page-header"><h1>Found Items</h1><p>Items turned in — check if yours is here.</p></div>
   <div class="section-header">
-    <div class="search-bar"><input type="text" placeholder="Search found items..." oninput="filterFoundItems(this.value)" style="width:260px;"/></div>
+    <div class="search-bar"><input type="text" placeholder="Search found items..." oninput="filterFoundCards(this.value)" style="width:260px;"/></div>
     <div class="rt-indicator"><div class="rt-dot"></div> ${foundItems.length} items</div>
   </div>
-  <div class="items-grid" id="found-grid">
-    ${foundItems.map(item=>`
-    <div class="item-card">
-      <div class="item-card-header"><div class="item-icon">📦</div><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></div>
-      <h3>${item.name}</h3>
-      <div class="meta"><span>📝 ${item.desc}</span><span>📍 ${item.location}</span><span>📅 ${item.dateFound}</span></div>
-    </div>`).join('')}
-  </div>`;
+  <div class="items-grid" id="found-grid">${renderFoundCards()}</div>`;
+}
+
+function renderFoundCards() {
+  if (foundItems.length === 0) return `<div class="empty-state"><div class="icon">📭</div><p>No found items yet.</p></div>`;
+  return foundItems.map(item => `
+  <div class="item-card">
+    <div class="item-card-header"><div class="item-icon">📦</div><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></div>
+    <h3>${item.name}</h3>
+    <div class="meta"><span>📝 ${item.desc}</span><span>📍 ${item.location}</span><span>📅 ${item.dateFound}</span></div>
+  </div>`).join('');
 }
 
 function userLostHTML() {
@@ -775,28 +677,28 @@ function userLostHTML() {
     <button class="btn-sm primary" onclick="openModal('modal-report')">+ Report Lost Item</button>
   </div>
   <div class="table-wrap"><table>
-    <thead><tr><th>Item</th><th>User</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th><th>Map</th></tr></thead>
-    <tbody>${lostItems.map(item=>`
-    <tr>
-      <td style="font-weight:500;">${item.name}</td><td>${item.user}</td>
-      <td style="color:var(--text-muted);max-width:180px;">${item.desc}</td>
-      <td>${item.dateLost}</td><td>${item.location}</td>
-      <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
-      <td>${item.lat?`<button class="btn-sm outline" onclick="viewMap(${item.lat},${item.lng},'${item.name}')">View</button>`:'—'}</td>
-    </tr>`).join('')}</tbody>
+    <thead><tr><th>Item</th><th>Reported By</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th><th>Map</th></tr></thead>
+    <tbody>${renderLostRows(false)}</tbody>
   </table></div>`;
 }
 
 function myReportsHTML() {
-  const mine = lostItems.filter(i => i.user === currentUser.name.split(' ')[0].toLowerCase());
+  const mine = lostItems.filter(i => i.user_id === currentUser.id);
   return `
   <div class="page-header"><h1>My Reports</h1><p>Lost items you have reported.</p></div>
   <div class="section-header"><div></div><button class="btn-sm primary" onclick="openModal('modal-report')">+ Report Lost Item</button></div>
-  ${mine.length===0?`<div class="empty-state"><div class="icon">📭</div><p>You haven't reported any lost items yet.</p><button class="btn-sm primary" style="margin-top:1rem;" onclick="openModal('modal-report')">Report Now</button></div>`:`
-  <div class="table-wrap"><table>
-    <thead><tr><th>Item</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th></tr></thead>
-    <tbody>${mine.map(item=>`<tr><td style="font-weight:500;">${item.name}</td><td style="color:var(--text-muted);">${item.desc}</td><td>${item.dateLost}</td><td>${item.location}</td><td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td></tr>`).join('')}</tbody>
-  </table></div>`}`;
+  ${mine.length === 0
+    ? `<div class="empty-state"><div class="icon">📭</div><p>You haven't reported any lost items yet.</p><button class="btn-sm primary" style="margin-top:1rem;" onclick="openModal('modal-report')">Report Now</button></div>`
+    : `<div class="table-wrap"><table>
+        <thead><tr><th>Item</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th></tr></thead>
+        <tbody>${mine.map(item=>`
+        <tr>
+          <td style="font-weight:500;">${item.name}</td>
+          <td style="color:var(--text-muted);">${item.desc}</td>
+          <td>${item.dateLost}</td><td>${item.location}</td>
+          <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
+        </tr>`).join('')}</tbody>
+       </table></div>`}`;
 }
 
 function profileHTML() {
@@ -805,48 +707,59 @@ function profileHTML() {
   <div style="max-width:500px;">
     <div class="table-wrap" style="padding:1.5rem;">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:1.5rem;">
-        <div class="avatar" style="width:56px;height:56px;font-size:18px;">${currentUser.avatar}</div>
-        <div><div style="font-weight:600;font-size:16px;">${currentUser.name}</div><div style="color:var(--text-muted);font-size:14px;">${currentUser.email}</div></div>
+        <div class="avatar" style="width:56px;height:56px;font-size:18px;">${currentUser.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()}</div>
+        <div>
+          <div style="font-weight:600;font-size:16px;">${currentUser.name}</div>
+          <div style="color:var(--text-muted);font-size:14px;">${currentUser.email}</div>
+          <span class="status-chip ${currentUser.role}" style="margin-top:4px;">${currentUser.role}</span>
+        </div>
       </div>
-      <div class="form-group"><label>Full Name</label><input type="text" value="${currentUser.name}"/></div>
-      <div class="form-group"><label>Email</label><input type="email" value="${currentUser.email}"/></div>
-      <div class="form-group"><label>New Password</label><input type="password" placeholder="Leave blank to keep current"/></div>
-      <button class="btn-sm primary" onclick="showToast('Profile updated!')">Save Changes</button>
+      <div class="form-group"><label>Full Name</label><input type="text" value="${currentUser.name}" id="profile-name"/></div>
+      <div class="form-group"><label>Email</label><input type="email" value="${currentUser.email}" readonly style="background:var(--surface2);"/></div>
+      <button class="btn-sm primary" onclick="showToast('Profile saved!')">Save Changes</button>
     </div>
   </div>`;
 }
 
-// ── ADMIN TAB RENDERERS ──
+// ═══════════════════════════════════════════════════════════
+//  ADMIN TABS
+// ═══════════════════════════════════════════════════════════
 function renderAdminTab(tab) {
   const main = document.getElementById('admin-main');
-  if (tab === 'overview')    main.innerHTML = adminOverviewHTML();
-  else if (tab === 'found-mgmt') main.innerHTML = adminFoundHTML();
-  else if (tab === 'lost-mgmt')  main.innerHTML = adminLostHTML();
-  else if (tab === 'audit')  main.innerHTML = adminAuditHTML();
-  else if (tab === 'users')  main.innerHTML = adminUsersHTML();
-  simulateChart();
+  main.innerHTML = `<div style="padding:2rem;color:var(--text-muted);font-size:14px;">Loading...</div>`;
+  if      (tab === 'overview')    loadAdminOverview();
+  else if (tab === 'found-mgmt')  loadAdminFound();
+  else if (tab === 'lost-mgmt')   loadAdminLost();
+  else if (tab === 'audit')       loadAdminAudit();
+  else if (tab === 'users')       loadAdminUsers();
 }
 
-function adminOverviewHTML() {
-  const pending = lostItems.filter(i=>i.status==='Pending').length;
-  const resolved = lostItems.filter(i=>i.status==='Resolved').length;
-  return `
+async function loadAdminOverview() {
+  const stats = await loadStats();
+  const main  = document.getElementById('admin-main');
+  const pending  = lostItems.filter(i => i.status === 'Pending').length;
+  const resolved = lostItems.filter(i => i.status === 'Resolved').length;
+  main.innerHTML = `
   <div class="page-header"><h1>Admin Dashboard</h1><p>Full system overview and management.</p></div>
   <div class="ws-ticker"><div class="rt-dot"></div><span><strong>WebSocket:</strong> All clients connected — real-time updates active.</span></div>
   <div class="metrics-row">
-    <div class="metric-card accent-card"><div class="label">Total Lost</div><div class="value">${lostItems.length}</div></div>
-    <div class="metric-card"><div class="label">Total Found</div><div class="value">${foundItems.length}</div></div>
-    <div class="metric-card"><div class="label">Pending</div><div class="value">${pending}</div></div>
-    <div class="metric-card"><div class="label">Resolved</div><div class="value">${resolved}</div></div>
+    <div class="metric-card accent-card"><div class="label">Total Lost</div><div class="value">${stats ? stats.total_lost : lostItems.length}</div></div>
+    <div class="metric-card"><div class="label">Total Found</div><div class="value">${stats ? stats.total_found : foundItems.length}</div></div>
+    <div class="metric-card"><div class="label">Pending</div><div class="value">${stats ? stats.total_pending : pending}</div></div>
+    <div class="metric-card"><div class="label">Resolved</div><div class="value">${stats ? stats.total_resolved : resolved}</div></div>
   </div>
   <div class="two-col">
     <div>
       <div class="section-header"><h2>Live Activity</h2><div class="rt-indicator"><div class="rt-dot"></div>Real-time</div></div>
-      <div class="table-wrap" style="padding:0 1rem;">
-        <div class="activity-list">
-          ${activityFeed.map(a=>`<div class="activity-item"><div class="activity-dot ${a.type}"></div><div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`).join('')}
-        </div>
-      </div>
+      <div class="table-wrap" style="padding:0 1rem;"><div class="activity-list" id="activity-feed">${
+        stats && stats.recent_activity
+          ? stats.recent_activity.map(a => `
+            <div class="activity-item">
+              <div class="activity-dot blue"></div>
+              <div><div class="activity-text">${a.username}: ${a.action}</div><div class="activity-time">${new Date(a.created_at).toLocaleString()}</div></div>
+            </div>`).join('')
+          : renderActivityFeed()
+      }</div></div>
     </div>
     <div>
       <div class="section-header"><h2>Items by Status</h2></div>
@@ -859,13 +772,15 @@ function adminOverviewHTML() {
     <button class="btn-sm outline" onclick="renderAdminTab('lost-mgmt')">Manage Lost Items</button>
     <button class="btn-sm outline" onclick="renderAdminTab('audit')">View Audit Log</button>
   </div>`;
+  drawChart();
 }
 
-function adminFoundHTML() {
-  return `
+async function loadAdminFound() {
+  await loadFoundItems();
+  document.getElementById('admin-main').innerHTML = `
   <div class="page-header"><h1>Found Items Management</h1><p>Add, edit, or remove found items.</p></div>
   <div class="section-header">
-    <div class="search-bar"><input type="text" placeholder="Search..." style="width:240px;"/></div>
+    <div class="search-bar"><input type="text" placeholder="Search..." style="width:240px;" oninput="filterFoundTable(this.value)"/></div>
     <button class="btn-sm primary" onclick="openFoundModal()">+ Post Found Item</button>
   </div>
   <div class="table-wrap"><table>
@@ -875,69 +790,95 @@ function adminFoundHTML() {
 }
 
 function renderFoundRows() {
-  return foundItems.map(item=>`
+  if (foundItems.length === 0) return `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">No found items.</td></tr>`;
+  return foundItems.map(item => `
   <tr id="found-row-${item.id}">
     <td style="font-weight:500;">${item.name}</td>
     <td style="color:var(--text-muted);">${item.desc}</td>
-    <td>${item.dateFound}</td><td>${item.location}</td>
-    <td><span class="status-chip available">${item.status}</span></td>
+    <td>${item.dateFound}</td>
+    <td>${item.location}</td>
+    <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
     <td><div class="td-actions">
       <button class="btn-sm outline" onclick="editFoundItem(${item.id})">Edit</button>
-      <button class="btn-sm danger" onclick="deleteFoundItem(${item.id})">Delete</button>
+      <button class="btn-sm danger"  onclick="deleteFoundItem(${item.id})">Delete</button>
     </div></td>
   </tr>`).join('');
 }
 
-function adminLostHTML() {
-  return `
+async function loadAdminLost() {
+  await loadLostItems();
+  document.getElementById('admin-main').innerHTML = `
   <div class="page-header"><h1>Lost Items Management</h1><p>Review and manage all lost item reports.</p></div>
   <div class="section-header"><div class="search-bar"><input type="text" placeholder="Search..." style="width:240px;"/></div></div>
   <div class="table-wrap"><table>
     <thead><tr><th>Item</th><th>User</th><th>Description</th><th>Date Lost</th><th>Location</th><th>Status</th><th>Map</th><th>Actions</th></tr></thead>
-    <tbody id="lost-table-body">${renderLostRows()}</tbody>
+    <tbody id="lost-table-body">${renderLostRows(true)}</tbody>
   </table></div>`;
 }
 
-function renderLostRows() {
-  return lostItems.map(item=>`
+function renderLostRows(adminMode = false) {
+  if (lostItems.length === 0) return `<tr><td colspan="${adminMode ? 8 : 7}" style="text-align:center;color:var(--text-muted);padding:2rem;">No lost items.</td></tr>`;
+  return lostItems.map(item => `
   <tr id="lost-row-${item.id}">
-    <td style="font-weight:500;">${item.name}</td><td>${item.user}</td>
+    <td style="font-weight:500;">${item.name}</td>
+    <td>${item.user}</td>
     <td style="color:var(--text-muted);max-width:160px;">${item.desc}</td>
-    <td>${item.dateLost}</td><td>${item.location}</td>
+    <td>${item.dateLost}</td>
+    <td>${item.location}</td>
     <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
-    <td>${item.lat?`<button class="btn-sm outline" onclick="viewMap(${item.lat},${item.lng},'${item.name}')">View</button>`:'—'}</td>
-    <td><div class="td-actions">
+    <td>${item.lat ? `<button class="btn-sm outline" onclick="viewMap(${item.lat},${item.lng},'${item.name}')">View</button>` : '—'}</td>
+    ${adminMode ? `<td><div class="td-actions">
       <button class="btn-sm outline" onclick="openStatusModal(${item.id})">Edit Status</button>
-      <button class="btn-sm danger" onclick="deleteLostItem(${item.id})">Delete</button>
-    </div></td>
+      <button class="btn-sm danger"  onclick="deleteLostItem(${item.id})">Delete</button>
+    </div></td>` : ''}
   </tr>`).join('');
 }
 
-function adminAuditHTML() {
-  return `
+async function loadAdminAudit() {
+  const logs = await loadAuditLog();
+  document.getElementById('admin-main').innerHTML = `
   <div class="page-header"><h1>Audit Trail</h1><p>A log of all actions performed in the system.</p></div>
   <div class="table-wrap"><table>
-    <thead><tr><th>Who</th><th>Action</th><th>Timestamp</th></tr></thead>
-    <tbody>${auditLog.map(a=>`<tr><td><strong>${a.who}</strong></td><td style="color:var(--text-muted);">${a.action}</td><td style="color:var(--text-light);white-space:nowrap;">${a.time}</td></tr>`).join('')}</tbody>
+    <thead><tr><th>Who</th><th>Action</th><th>Table</th><th>Timestamp</th></tr></thead>
+    <tbody>${logs.length === 0
+      ? `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem;">No audit logs yet.</td></tr>`
+      : logs.map(a => `
+        <tr>
+          <td><strong>${a.username}</strong></td>
+          <td style="color:var(--text-muted);">${a.action}</td>
+          <td style="color:var(--text-light);">${a.target_table}</td>
+          <td style="color:var(--text-light);white-space:nowrap;">${new Date(a.created_at).toLocaleString()}</td>
+        </tr>`).join('')
+    }</tbody>
   </table></div>`;
 }
 
-function adminUsersHTML() {
-  return `
+async function loadAdminUsers() {
+  const users = await loadUsers();
+  document.getElementById('admin-main').innerHTML = `
   <div class="page-header"><h1>User Management</h1><p>View all registered users and roles.</p></div>
   <div class="table-wrap"><table>
-    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Reports</th></tr></thead>
-    <tbody>${users.map(u=>`
-    <tr>
-      <td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">${u.avatar}</div><span style="font-weight:500;">${u.name}</span></div></td>
-      <td style="color:var(--text-muted);">${u.email}</td>
-      <td><span class="status-chip ${u.role==='admin'?'pending':'available'}">${u.role}</span></td>
-      <td>${lostItems.filter(i=>i.user===u.name.split(' ')[0].toLowerCase()).length}</td>
-    </tr>`).join('')}</tbody>
+    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr></thead>
+    <tbody>${users.length === 0
+      ? `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">No users found.</td></tr>`
+      : users.map(u => `
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:10px;">
+            <div class="avatar" style="width:28px;height:28px;font-size:11px;">${(u.first_name[0]+u.last_name[0]).toUpperCase()}</div>
+            <span style="font-weight:500;">${u.first_name} ${u.last_name}</span>
+          </div></td>
+          <td style="color:var(--text-muted);">${u.email}</td>
+          <td style="color:var(--text-muted);">${u.phone || '—'}</td>
+          <td><span class="status-chip ${u.role}">${u.role}</span></td>
+          <td style="color:var(--text-light);white-space:nowrap;">${new Date(u.created_at).toLocaleDateString()}</td>
+        </tr>`).join('')
+    }</tbody>
   </table></div>`;
 }
 
-// ── MODAL LOGIC ──
+// ═══════════════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════════════
 function openModal(id) {
   document.getElementById(id).style.display = 'flex';
   if (id === 'modal-report') initMap();
@@ -946,13 +887,13 @@ function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 function initMap() {
   if (reportMap) { reportMap.remove(); reportMap = null; reportMarker = null; }
-  setTimeout(()=>{
+  setTimeout(() => {
     reportMap = L.map('report-map').setView([6.9214, 122.0790], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'© OpenStreetMap', maxZoom:19 }).addTo(reportMap);
-    reportMap.on('click', function(e) {
-      const {lat, lng} = e.latlng;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(reportMap);
+    reportMap.on('click', (e) => {
+      const { lat, lng } = e.latlng;
       if (reportMarker) reportMap.removeLayer(reportMarker);
-      reportMarker = L.marker([lat,lng]).addTo(reportMap).bindPopup('📍 Lost here').openPopup();
+      reportMarker = L.marker([lat, lng]).addTo(reportMap).bindPopup('📍 Lost here').openPopup();
       document.getElementById('map-coords').textContent = `Pinned: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     });
     reportMap.invalidateSize();
@@ -962,195 +903,266 @@ function initMap() {
 function previewImg(input) {
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => { const img = document.getElementById('img-preview'); img.src = e.target.result; img.style.display='block'; };
+  reader.onload = e => { const img = document.getElementById('img-preview'); img.src = e.target.result; img.style.display = 'block'; };
   reader.readAsDataURL(file);
 }
 
-function submitReport() {
+// ── Submit Report (calls API) ─────────────────────────────
+async function submitReport() {
   let ok = true;
-  ok = validateField('r-name','r-name-err',v=>v.length>0) && ok;
-  ok = validateField('r-item','r-item-err',v=>v.length>0) && ok;
-  ok = validateField('r-desc','r-desc-err',v=>v.length>0) && ok;
-  ok = validateField('r-date','r-date-err',v=>v.length>0) && ok;
+  ok = validateField('r-item','r-item-err', v => v.length > 0) && ok;
+  ok = validateField('r-desc','r-desc-err', v => v.length > 0) && ok;
+  ok = validateField('r-date','r-date-err', v => v.length > 0) && ok;
   if (!ok) return;
-  const newItem = {
-    id: lostItems.length+1,
-    name: document.getElementById('r-item').value,
-    user: currentUser ? currentUser.name.split(' ')[0].toLowerCase() : 'guest',
-    desc: document.getElementById('r-desc').value,
-    dateLost: document.getElementById('r-date').value,
-    location: document.getElementById('r-location').value || 'Unknown',
-    status: 'Pending',
-    lat: reportMarker ? reportMarker.getLatLng().lat : null,
-    lng: reportMarker ? reportMarker.getLatLng().lng : null,
+
+  const body = {
+    item_name  : document.getElementById('r-item').value,
+    description: document.getElementById('r-desc').value,
+    date_lost  : document.getElementById('r-date').value,
+    location   : document.getElementById('r-location').value || 'Unknown',
+    latitude   : reportMarker ? reportMarker.getLatLng().lat : null,
+    longitude  : reportMarker ? reportMarker.getLatLng().lng : null,
   };
-  lostItems.push(newItem);
-  addAudit(currentUser ? currentUser.name : 'Guest', `Reported lost item: ${newItem.name}`);
-  addActivity('amber', `${newItem.name} reported lost by ${newItem.user}`, 'just now');
-  closeModal('modal-report');
-  showToast('Lost item reported successfully!');
-  document.getElementById('user-lost-badge').textContent = lostItems.filter(i=>i.status==='Pending').length;
+
+  try {
+    const res  = await fetch(`${API}/lost`, { method:'POST', headers: apiHeaders(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+    showToast('Lost item reported successfully!');
+    closeModal('modal-report');
+    await loadLostItems();
+    updateLostBadge();
+    // Refresh table if open
+    const tbody = document.getElementById('lost-table-body');
+    if (tbody) tbody.innerHTML = renderLostRows(true);
+  } catch (e) {
+    showToast('Server error. Try again.', true);
+  }
 }
 
-function openFoundModal(id=null) {
+// ── Found Item CRUD (calls API) ───────────────────────────
+function openFoundModal(id = null) {
   editingFoundId = id;
   document.getElementById('found-modal-title').textContent = id ? 'Edit Found Item' : 'Post Found Item';
   if (id) {
-    const item = foundItems.find(i=>i.id===id);
-    document.getElementById('f-name').value = item.name;
-    document.getElementById('f-date').value = item.dateFound;
-    document.getElementById('f-desc').value = item.desc;
-    document.getElementById('f-loc').value = item.location;
+    const item = foundItems.find(i => i.id === id);
+    document.getElementById('f-name').value   = item.name;
+    document.getElementById('f-date').value   = item.dateFound;
+    document.getElementById('f-desc').value   = item.desc;
+    document.getElementById('f-loc').value    = item.location;
     document.getElementById('f-status').value = item.status;
   } else {
-    ['f-name','f-date','f-desc','f-loc'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('f-status').value='Available';
+    ['f-name','f-date','f-desc','f-loc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f-status').value = 'Available';
   }
-  document.getElementById('modal-found').style.display='flex';
+  document.getElementById('modal-found').style.display = 'flex';
 }
 
-function submitFoundItem() {
+async function submitFoundItem() {
   let ok = true;
-  ok = validateField('f-name','f-name-err',v=>v.length>0) && ok;
-  ok = validateField('f-date','f-date-err',v=>v.length>0) && ok;
-  ok = validateField('f-desc','f-desc-err',v=>v.length>0) && ok;
-  ok = validateField('f-loc','f-loc-err',v=>v.length>0) && ok;
+  ok = validateField('f-name','f-name-err', v => v.length > 0) && ok;
+  ok = validateField('f-date','f-date-err', v => v.length > 0) && ok;
+  ok = validateField('f-desc','f-desc-err', v => v.length > 0) && ok;
+  ok = validateField('f-loc','f-loc-err',   v => v.length > 0) && ok;
   if (!ok) return;
-  const data = { name:document.getElementById('f-name').value, dateFound:document.getElementById('f-date').value, desc:document.getElementById('f-desc').value, location:document.getElementById('f-loc').value, status:document.getElementById('f-status').value, postedBy:'Admin' };
-  if (editingFoundId) {
-    const idx = foundItems.findIndex(i=>i.id===editingFoundId);
-    foundItems[idx] = { ...foundItems[idx], ...data };
-    addAudit('Admin', `Edited found item: ${data.name}`);
-    showToast('Found item updated!');
-  } else {
-    foundItems.push({ id:foundItems.length+1, ...data });
-    addAudit('Admin', `Posted found item: ${data.name}`);
-    addActivity('blue', `New found item posted: ${data.name}`, 'just now');
-    showToast('Found item posted!');
+
+  const body = {
+    item_name  : document.getElementById('f-name').value,
+    date_found : document.getElementById('f-date').value,
+    description: document.getElementById('f-desc').value,
+    location   : document.getElementById('f-loc').value,
+    status     : document.getElementById('f-status').value,
+  };
+
+  try {
+    let res, data;
+    if (editingFoundId) {
+      res  = await fetch(`${API}/found/${editingFoundId}`, { method:'PUT', headers: apiHeaders(), body: JSON.stringify(body) });
+      data = await res.json();
+      if (!data.success) { showToast(data.message, true); return; }
+      showToast('Found item updated!');
+    } else {
+      res  = await fetch(`${API}/found`, { method:'POST', headers: apiHeaders(), body: JSON.stringify(body) });
+      data = await res.json();
+      if (!data.success) { showToast(data.message, true); return; }
+      showToast('Found item posted!');
+    }
+    closeModal('modal-found');
+    await loadFoundItems();
+    const tbody = document.getElementById('found-table-body');
+    if (tbody) tbody.innerHTML = renderFoundRows();
+  } catch (e) {
+    showToast('Server error. Try again.', true);
   }
-  closeModal('modal-found');
-  const tbody = document.getElementById('found-table-body');
-  if (tbody) tbody.innerHTML = renderFoundRows();
 }
 
 function editFoundItem(id) { openFoundModal(id); }
 
-function deleteFoundItem(id) {
-  foundItems = foundItems.filter(i=>i.id!==id);
-  addAudit('Admin',`Deleted found item #${id}`);
-  const tbody = document.getElementById('found-table-body');
-  if (tbody) tbody.innerHTML = renderFoundRows();
-  showToast('Found item deleted.');
+async function deleteFoundItem(id) {
+  if (!confirm('Delete this found item?')) return;
+  try {
+    const res  = await fetch(`${API}/found/${id}`, { method:'DELETE', headers: apiHeaders() });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+    showToast('Found item deleted.');
+    await loadFoundItems();
+    const tbody = document.getElementById('found-table-body');
+    if (tbody) tbody.innerHTML = renderFoundRows();
+  } catch (e) {
+    showToast('Server error. Try again.', true);
+  }
 }
 
+// ── Lost Item Status + Delete (calls API) ─────────────────
 function openStatusModal(id) {
   editingLostId = id;
-  const item = lostItems.find(i=>i.id===id);
-  document.getElementById('status-item-name').value = item.name;
-  document.getElementById('status-select').value = item.status;
-  document.getElementById('modal-status').style.display='flex';
+  const item = lostItems.find(i => i.id === id);
+  document.getElementById('status-item-name').value  = item.name;
+  document.getElementById('status-select').value     = item.status;
+  document.getElementById('modal-status').style.display = 'flex';
 }
 
-function saveStatus() {
+async function saveStatus() {
   const newStatus = document.getElementById('status-select').value;
-  const item = lostItems.find(i=>i.id===editingLostId);
-  item.status = newStatus;
-  addAudit('Admin',`Changed status of "${item.name}" to ${newStatus}`);
-  if (newStatus==='Resolved') addActivity('green',`${item.name} marked as Resolved`,'just now');
-  closeModal('modal-status');
-  showToast(`Status updated to ${newStatus}`);
-  const tbody = document.getElementById('lost-table-body');
-  if (tbody) tbody.innerHTML = renderLostRows();
+  try {
+    const res  = await fetch(`${API}/lost/${editingLostId}/status`, {
+      method : 'PUT',
+      headers: apiHeaders(),
+      body   : JSON.stringify({ status: newStatus })
+    });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+    showToast(`Status updated to ${newStatus}`);
+    closeModal('modal-status');
+    await loadLostItems();
+    const tbody = document.getElementById('lost-table-body');
+    if (tbody) tbody.innerHTML = renderLostRows(true);
+  } catch (e) {
+    showToast('Server error. Try again.', true);
+  }
 }
 
-function deleteLostItem(id) {
-  const item = lostItems.find(i=>i.id===id);
-  lostItems = lostItems.filter(i=>i.id!==id);
-  addAudit('Admin',`Deleted lost item: ${item.name}`);
-  const tbody = document.getElementById('lost-table-body');
-  if (tbody) tbody.innerHTML = renderLostRows();
-  showToast('Lost item deleted.');
+async function deleteLostItem(id) {
+  if (!confirm('Delete this lost item?')) return;
+  try {
+    const res  = await fetch(`${API}/lost/${id}`, { method:'DELETE', headers: apiHeaders() });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message, true); return; }
+    showToast('Lost item deleted.');
+    await loadLostItems();
+    const tbody = document.getElementById('lost-table-body');
+    if (tbody) tbody.innerHTML = renderLostRows(true);
+    updateLostBadge();
+  } catch (e) {
+    showToast('Server error. Try again.', true);
+  }
 }
 
-// ── HELPERS ──
-function addAudit(who, action) {
-  const now = new Date();
-  const time = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  auditLog.unshift({ who, action, time });
-}
-
-function addActivity(type, text, time) {
-  activityFeed.unshift({ type, text, time });
-  if (activityFeed.length > 8) activityFeed.pop();
-}
-
-function filterFoundItems(query) {
-  const grid = document.getElementById('found-grid'); if (!grid) return;
-  const q = query.toLowerCase();
-  grid.innerHTML = foundItems.filter(i=>i.name.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q)||i.location.toLowerCase().includes(q)).map(item=>`
-  <div class="item-card">
-    <div class="item-card-header"><div class="item-icon">📦</div><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></div>
-    <h3>${item.name}</h3>
-    <div class="meta"><span>📝 ${item.desc}</span><span>📍 ${item.location}</span><span>📅 ${item.dateFound}</span></div>
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+function renderActivityFeed() {
+  if (activityFeed.length === 0) return `<div style="padding:1rem;color:var(--text-muted);font-size:13px;">No activity yet.</div>`;
+  return activityFeed.map(a => `
+  <div class="activity-item">
+    <div class="activity-dot ${a.type}"></div>
+    <div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div>
   </div>`).join('');
 }
 
-function viewMap(lat, lng, name) { window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`,'_blank'); }
-
-function showToast(msg, isError=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show' + (isError?' error':'');
-  setTimeout(()=>{ t.className=''; }, 3000);
+function filterFoundCards(query) {
+  const grid = document.getElementById('found-grid'); if (!grid) return;
+  const q = query.toLowerCase();
+  const filtered = foundItems.filter(i =>
+    i.name.toLowerCase().includes(q) ||
+    i.desc.toLowerCase().includes(q) ||
+    i.location.toLowerCase().includes(q)
+  );
+  grid.innerHTML = filtered.length === 0
+    ? `<div class="empty-state"><div class="icon">🔍</div><p>No items match "${query}"</p></div>`
+    : filtered.map(item => `
+      <div class="item-card">
+        <div class="item-card-header"><div class="item-icon">📦</div><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></div>
+        <h3>${item.name}</h3>
+        <div class="meta"><span>📝 ${item.desc}</span><span>📍 ${item.location}</span><span>📅 ${item.dateFound}</span></div>
+      </div>`).join('');
 }
 
-function simulateChart() {
-  setTimeout(()=>{
+function filterFoundTable(query) {
+  const tbody = document.getElementById('found-table-body'); if (!tbody) return;
+  const q = query.toLowerCase();
+  const filtered = foundItems.filter(i =>
+    i.name.toLowerCase().includes(q) ||
+    i.desc.toLowerCase().includes(q) ||
+    i.location.toLowerCase().includes(q)
+  );
+  tbody.innerHTML = filtered.length === 0
+    ? `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">No results for "${query}"</td></tr>`
+    : filtered.map(item => `
+      <tr>
+        <td style="font-weight:500;">${item.name}</td>
+        <td style="color:var(--text-muted);">${item.desc}</td>
+        <td>${item.dateFound}</td><td>${item.location}</td>
+        <td><span class="status-chip ${item.status.toLowerCase()}">${item.status}</span></td>
+        <td><div class="td-actions">
+          <button class="btn-sm outline" onclick="editFoundItem(${item.id})">Edit</button>
+          <button class="btn-sm danger"  onclick="deleteFoundItem(${item.id})">Delete</button>
+        </div></td>
+      </tr>`).join('');
+}
+
+function viewMap(lat, lng, name) {
+  window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`, '_blank');
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show' + (isError ? ' error' : '');
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+
+function drawChart() {
+  setTimeout(() => {
     const canvas = document.getElementById('overview-chart') || document.getElementById('admin-chart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const W = canvas.offsetWidth, H = canvas.offsetHeight;
-    canvas.width=W; canvas.height=H;
-    const months=['Aug','Sep','Oct','Nov','Dec','Jan'];
-    const lostData=[8,12,9,14,7,4];
-    const foundData=[5,8,6,10,5,2];
+    canvas.width = W; canvas.height = H;
+    const months    = ['Aug','Sep','Oct','Nov','Dec','Jan'];
+    const lostData  = [8,12,9,14,7,4];
+    const foundData = [5,8,6,10,5,2];
     const maxV=18, padL=32, padB=24, padT=10, padR=10;
     const cW=W-padL-padR, cH=H-padT-padB;
     const barW=Math.floor(cW/months.length*0.35);
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='rgba(0,0,0,0.06)'; ctx.lineWidth=1;
-    for(let i=0;i<=4;i++){
+    for (let i=0; i<=4; i++) {
       const y=padT+cH-(cH/4*i);
       ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
       ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='right';
-      ctx.fillText(Math.round(maxV/4*i),padL-4,y+3);
+      ctx.fillText(Math.round(maxV/4*i), padL-4, y+3);
     }
-    months.forEach((m,i)=>{
+    months.forEach((m,i) => {
       const x=padL+(i/months.length)*cW+cW/(months.length*2);
       const lH=(lostData[i]/maxV)*cH, fH=(foundData[i]/maxV)*cH;
-      ctx.fillStyle='#2A5C45'; ctx.fillRect(x-barW-2,padT+cH-lH,barW,lH);
-      ctx.fillStyle='#4A9B72'; ctx.fillRect(x+2,padT+cH-fH,barW,fH);
+      ctx.fillStyle='#2A5C45'; ctx.fillRect(x-barW-2, padT+cH-lH, barW, lH);
+      ctx.fillStyle='#4A9B72'; ctx.fillRect(x+2,      padT+cH-fH, barW, fH);
       ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='center';
-      ctx.fillText(m,x,H-6);
+      ctx.fillText(m, x, H-6);
     });
     ctx.fillStyle='#2A5C45'; ctx.fillRect(padL,6,10,8);
     ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='left'; ctx.fillText('Lost',padL+13,13);
     ctx.fillStyle='#4A9B72'; ctx.fillRect(padL+45,6,10,8);
     ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillText('Found',padL+58,13);
-  },150);
+  }, 150);
 }
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+loadLandingData();   // Load public found items on landing page
+connectWS();         // Start WebSocket
 </script>
-
-<style>
-  .sidebar-link { display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:400;color:var(--text-muted);cursor:pointer;transition:all 0.12s;text-decoration:none; }
-  .sidebar-link:hover { background:var(--surface2);color:var(--text); }
-  .sidebar-link.active { background:var(--accent-light);color:var(--accent);font-weight:500; }
-  .main-content { flex:1;overflow-y:auto;padding:2rem; }
-</style>
-
-<!-- TOAST -->
-<div id="toast"></div>
-
-
 </body>
 </html>
