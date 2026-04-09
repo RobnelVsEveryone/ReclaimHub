@@ -191,4 +191,286 @@ app.get('/api/auth/me', authMiddleware(), async (req, res) => {
 });
 
 
+//  USERS ROUTES  (admin only)
+// ╚══════════════════════════════════════════════════════════╝
+
+// GET /api/users
+app.get('/api/users', authMiddleware('admin'), async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT id, first_name, last_name, email, phone, role, created_at FROM users ORDER BY created_at DESC'
+    );
+    console.log(`📄 READ — users table fetched (${rows.length} records)`);
+    return res.json({ success: true, count: rows.length, data: rows });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// DELETE /api/users/:id  (admin only)
+app.delete('/api/users/:id', authMiddleware('admin'), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [existing] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+
+    await db.query('DELETE FROM users WHERE id = ?', [id]);
+    console.log(`🗑️  DELETE — user ID: ${id} deleted by admin ${req.user.email}`);
+    await logAudit(req.user.id, req.user.email, 'DELETE_USER', 'users', id);
+    broadcast('user_deleted', { id });
+
+    return res.json({ success: true, message: 'User deleted.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// ╔══════════════════════════════════════════════════════════╗
+//  FOUND ITEMS ROUTES
+// ╚══════════════════════════════════════════════════════════╝
+
+// GET /api/found  — public (no auth needed to browse)
+app.get('/api/found', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM found_items ORDER BY date_found DESC');
+    console.log(`📄 READ — found_items fetched (${rows.length} records)`);
+    return res.json({ success: true, count: rows.length, data: rows });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// GET /api/found/:id
+app.get('/api/found/:id', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM found_items WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: 'Found item not found.' });
+    return res.json({ success: true, data: rows[0] });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// POST /api/found  (admin only)
+app.post('/api/found', authMiddleware('admin'), async (req, res) => {
+  const { item_name, description, date_found, location, status } = req.body;
+
+  if (!item_name || !description || !date_found || !location) {
+    return res.status(400).json({ success: false, message: 'item_name, description, date_found and location are required.' });
+  }
+
+  try {
+    const [result] = await db.query(
+      `INSERT INTO found_items (item_name, description, date_found, location, status, posted_by, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+      [item_name, description, date_found, location, status || 'Available', req.user.email]
+    );
+
+    console.log(`✅ CREATE — found item "${item_name}" added by ${req.user.email} | ID: ${result.insertId}`);
+    await logAudit(req.user.id, req.user.email, 'CREATE_FOUND_ITEM', 'found_items', result.insertId);
+    broadcast('found_item_created', { id: result.insertId, item_name, location, status: status || 'Available' });
+
+    return res.status(201).json({ success: true, message: 'Found item posted.', id: result.insertId });
+  } catch (err) {
+    console.error('❌ Create found item error:', err.message);
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// PUT /api/found/:id  (admin only)
+app.put('/api/found/:id', authMiddleware('admin'), async (req, res) => {
+  const { id } = req.params;
+  const { item_name, description, date_found, location, status } = req.body;
+
+  try {
+    const [existing] = await db.query('SELECT * FROM found_items WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ success: false, message: 'Found item not found.' });
+
+    await db.query(
+      `UPDATE found_items SET item_name=?, description=?, date_found=?, location=?, status=?, updated_at=NOW() WHERE id=?`,
+      [item_name, description, date_found, location, status, id]
+    );
+
+    console.log(`✅ UPDATE — found item ID: ${id} updated by ${req.user.email}`);
+    await logAudit(req.user.id, req.user.email, 'UPDATE_FOUND_ITEM', 'found_items', id);
+    broadcast('found_item_updated', { id, item_name, location, status });
+
+    return res.json({ success: true, message: 'Found item updated.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// DELETE /api/found/:id  (admin only)
+app.delete('/api/found/:id', authMiddleware('admin'), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [existing] = await db.query('SELECT * FROM found_items WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ success: false, message: 'Found item not found.' });
+
+    const itemName = existing[0].item_name;
+    await db.query('DELETE FROM found_items WHERE id = ?', [id]);
+
+    console.log(`🗑️  DELETE — found item "${itemName}" (ID: ${id}) deleted by ${req.user.email}`);
+    await logAudit(req.user.id, req.user.email, 'DELETE_FOUND_ITEM', 'found_items', id);
+    broadcast('found_item_deleted', { id, item_name: itemName });
+
+    return res.json({ success: true, message: 'Found item deleted.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// ╔══════════════════════════════════════════════════════════╗
+//  LOST ITEMS ROUTES
+// ╚══════════════════════════════════════════════════════════╝
+
+// GET /api/lost  — auth required (users must log in to see full list)
+app.get('/api/lost', authMiddleware(), async (req, res) => {
+  try {
+    let rows;
+    if (req.user.role === 'admin') {
+      // Admin sees all
+      [rows] = await db.query(`
+        SELECT l.*, CONCAT(u.first_name,' ',u.last_name) AS reporter_name
+        FROM lost_items l
+        LEFT JOIN users u ON l.user_id = u.id
+        ORDER BY l.date_lost DESC
+      `);
+    } else {
+      // Regular user sees all but can only edit their own
+      [rows] = await db.query(`
+        SELECT l.*, CONCAT(u.first_name,' ',u.last_name) AS reporter_name
+        FROM lost_items l
+        LEFT JOIN users u ON l.user_id = u.id
+        ORDER BY l.date_lost DESC
+      `);
+    }
+    console.log(`📄 READ — lost_items fetched (${rows.length} records) by ${req.user.email}`);
+    return res.json({ success: true, count: rows.length, data: rows });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// GET /api/lost/my  — get only current user's reports
+app.get('/api/lost/my', authMiddleware(), async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM lost_items WHERE user_id = ? ORDER BY date_lost DESC',
+      [req.user.id]
+    );
+    return res.json({ success: true, count: rows.length, data: rows });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// GET /api/lost/:id
+app.get('/api/lost/:id', authMiddleware(), async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM lost_items WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: 'Lost item not found.' });
+    return res.json({ success: true, data: rows[0] });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// POST /api/lost  — any logged-in user can report
+app.post('/api/lost', authMiddleware(), async (req, res) => {
+  const { item_name, description, date_lost, location, latitude, longitude } = req.body;
+
+  if (!item_name || !description || !date_lost) {
+    return res.status(400).json({ success: false, message: 'item_name, description and date_lost are required.' });
+  }
+
+  try {
+    const [result] = await db.query(
+      `INSERT INTO lost_items (user_id, item_name, description, date_lost, location, latitude, longitude, status, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', NOW())`,
+      [req.user.id, item_name, description, date_lost, location || 'Unknown', latitude || null, longitude || null]
+    );
+
+    console.log(`✅ CREATE — lost item "${item_name}" reported by ${req.user.email} | ID: ${result.insertId}`);
+    await logAudit(req.user.id, req.user.email, 'REPORT_LOST_ITEM', 'lost_items', result.insertId);
+    broadcast('lost_item_created', { id: result.insertId, item_name, location, reporter: req.user.name });
+
+    return res.status(201).json({ success: true, message: 'Lost item reported.', id: result.insertId });
+  } catch (err) {
+    console.error('❌ Report lost item error:', err.message);
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// PUT /api/lost/:id/status  — admin only: update status
+app.put('/api/lost/:id/status', authMiddleware('admin'), async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const validStatuses = ['Pending', 'Resolved', 'Searching'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ success: false, message: `Status must be one of: ${validStatuses.join(', ')}` });
+  }
+
+  try {
+    const [existing] = await db.query('SELECT * FROM lost_items WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ success: false, message: 'Lost item not found.' });
+
+    await db.query('UPDATE lost_items SET status=?, updated_at=NOW() WHERE id=?', [status, id]);
+
+    console.log(`✅ UPDATE — lost item ID: ${id} status → "${status}" by admin ${req.user.email}`);
+    await logAudit(req.user.id, req.user.email, `STATUS_CHANGE_TO_${status.toUpperCase()}`, 'lost_items', id);
+    broadcast('lost_item_status_updated', { id, item_name: existing[0].item_name, status });
+
+    return res.json({ success: true, message: `Status updated to ${status}.` });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// PUT /api/lost/:id  — full update (admin only)
+app.put('/api/lost/:id', authMiddleware('admin'), async (req, res) => {
+  const { id } = req.params;
+  const { item_name, description, date_lost, location, status, latitude, longitude } = req.body;
+
+  try {
+    const [existing] = await db.query('SELECT * FROM lost_items WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ success: false, message: 'Lost item not found.' });
+
+    await db.query(
+      `UPDATE lost_items SET item_name=?, description=?, date_lost=?, location=?, status=?, latitude=?, longitude=?, updated_at=NOW() WHERE id=?`,
+      [item_name, description, date_lost, location, status, latitude, longitude, id]
+    );
+
+    console.log(`✅ UPDATE — lost item ID: ${id} fully updated by ${req.user.email}`);
+    await logAudit(req.user.id, req.user.email, 'UPDATE_LOST_ITEM', 'lost_items', id);
+    broadcast('lost_item_updated', { id, item_name, status });
+
+    return res.json({ success: true, message: 'Lost item updated.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// DELETE /api/lost/:id  (admin only)
+app.delete('/api/lost/:id', authMiddleware('admin'), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [existing] = await db.query('SELECT * FROM lost_items WHERE id = ?', [id]);
+    if (existing.length === 0) return res.status(404).json({ success: false, message: 'Lost item not found.' });
+
+    const itemName = existing[0].item_name;
+    await db.query('DELETE FROM lost_items WHERE id = ?', [id]);
+
+    console.log(`🗑️  DELETE — lost item "${itemName}" (ID: ${id}) deleted by admin ${req.user.email}`);
+    await logAudit(req.user.id, req.user.email, 'DELETE_LOST_ITEM', 'lost_items', id);
+    broadcast('lost_item_deleted', { id, item_name: itemName });
+
+    return res.json({ success: true, message: 'Lost item deleted.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
 startServer();
