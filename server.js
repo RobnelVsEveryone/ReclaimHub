@@ -213,7 +213,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // GET /api/auth/me  — verify token & get current user
-app.get('/api/auth/me', authMiddleware(), async (req, res) => {
+app.get('/api/stats', async (req, res) => {
   try {
     const [rows] = await db.query(
       'SELECT id, first_name, last_name, email, phone, role, created_at FROM users WHERE id = ?',

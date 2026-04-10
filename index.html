@@ -365,25 +365,27 @@ function connectWS() {
   const ws = new WebSocket('ws://localhost:3000');
   ws.onopen = () => console.log('🔌 WebSocket connected to FindIt server');
 
-  ws.onmessage = (msg) => {
+  ws.onmessage = async (msg) => {
     const { event, data } = JSON.parse(msg.data);
     console.log('📡 WS event:', event, data);
 
     if (['found_item_created','found_item_updated','found_item_deleted'].includes(event)) {
-      loadFoundItems().then(() => {
-        const tbody = document.getElementById('found-table-body');
-        if (tbody) tbody.innerHTML = renderFoundRows();
-        const grid = document.getElementById('found-grid');
-        if (grid) grid.innerHTML = renderFoundCards();
-      });
+      await loadFoundItems();               // wait for data first
+      refreshMetrics();                     // THEN update numbers
+      const tbody = document.getElementById('found-table-body');
+      if (tbody) tbody.innerHTML = renderFoundRows();
+      const grid = document.getElementById('found-grid');
+      if (grid) grid.innerHTML = renderFoundCards();
+      if (document.getElementById('page-landing').classList.contains('active')) loadLandingData();
     }
 
     if (['lost_item_created','lost_item_updated','lost_item_deleted','lost_item_status_updated'].includes(event)) {
-      loadLostItems().then(() => {
-        const tbody = document.getElementById('lost-table-body');
-        if (tbody) tbody.innerHTML = renderLostRows();
-        updateLostBadge();
-      });
+      await loadLostItems();                // wait for data first
+      refreshMetrics();                     // THEN update numbers
+      updateLostBadge();
+      const tbody = document.getElementById('lost-table-body');
+      if (tbody) tbody.innerHTML = renderLostRows(true);
+      if (document.getElementById('page-landing').classList.contains('active')) loadLandingData();
     }
 
     if (event === 'audit_log') {
@@ -463,24 +465,72 @@ async function loadUsers() {
 // Load public landing page found items (no token needed)
 async function loadLandingData() {
   try {
+    // Load found items for the preview cards
     const res  = await fetch(`${API}/found`);
     const data = await res.json();
-    if (!data.success) return;
-    const items = data.data.slice(0, 3);
-    document.getElementById('landing-found-grid').innerHTML = items.map(i => `
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📦</div>
-        <div>
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">${i.item_name}</h3>
-          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">${i.description} — ${i.location}</p>
-          <span class="badge ${i.status.toLowerCase()}">${i.status}</span>
+    if (data.success) {
+      const items = data.data.slice(0, 3);
+      document.getElementById('landing-found-grid').innerHTML = items.length === 0
+        ? '<p style="text-align:center;color:var(--text-muted);font-size:14px;">No found items yet.</p>'
+        : items.map(i => `
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📦</div>
+            <div>
+              <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">${i.item_name}</h3>
+              <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">${i.description} — ${i.location}</p>
+              <span class="badge ${i.status.toLowerCase()}">${i.status}</span>
+            </div>
+          </div>`).join('');
+    }
+
+    // Load stats for the numbers
+    const sRes  = await fetch(`${API}/stats`);
+    const sData = await sRes.json();
+    if (sData.success) {
+      const s = sData.data;
+      const totalReported = parseInt(s.total_lost) + parseInt(s.total_found);
+      const totalResolved = parseInt(s.total_resolved);
+      document.getElementById('landing-stats').innerHTML = `
+        <div style="text-align:center;">
+          <strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">${totalReported}</strong>
+          <span style="font-size:13px;color:var(--text-muted);">Items Reported</span>
         </div>
-      </div>`).join('');
+        <div style="text-align:center;">
+          <strong style="font-size:1.8rem;font-family:'DM Serif Display',serif;color:var(--accent);display:block;">${totalResolved}</strong>
+          <span style="font-size:13px;color:var(--text-muted);">Items Resolved</span>
+        </div>`;
+    }
   } catch (e) {
-    document.getElementById('landing-found-grid').innerHTML = '<p style="text-align:center;color:var(--text-muted);font-size:14px;">Could not load items. Is the server running?</p>';
+    document.getElementById('landing-found-grid').innerHTML =
+      '<p style="text-align:center;color:var(--text-muted);font-size:14px;">Could not load items. Is the server running?</p>';
   }
 }
 
+function refreshMetrics() {
+  const pending  = lostItems.filter(i => i.status === 'Pending').length;
+  const resolved = lostItems.filter(i => i.status === 'Resolved').length;
+
+  // Update all 4 metric cards wherever they are on screen
+  const allMetricCards = document.querySelectorAll('.metric-card');
+  allMetricCards.forEach(card => {
+    const label = card.querySelector('.label');
+    const valEl = card.querySelector('.value');
+    if (!label || !valEl) return;
+    const text = label.textContent.trim().toUpperCase();
+    if (text.includes('TOTAL LOST'))   valEl.textContent = lostItems.length;
+    if (text.includes('FOUND'))        valEl.textContent = foundItems.length;
+    if (text.includes('PENDING'))      valEl.textContent = pending;
+    if (text.includes('RESOLVED'))     valEl.textContent = resolved;
+  });
+
+  // Also update the sub-labels while we're at it
+  const subLabels = document.querySelectorAll('.metric-card .sub');
+  subLabels.forEach(sub => {
+    const label = sub.closest('.metric-card')?.querySelector('.label')?.textContent.trim().toUpperCase();
+    if (label?.includes('PENDING'))  sub.textContent = `${pending} awaiting resolution`;
+    if (label?.includes('RESOLVED')) sub.textContent = `${resolved} successfully matched`;
+  });
+}
 // ═══════════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════════
