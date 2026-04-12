@@ -3,9 +3,6 @@
 This project used **Claude (Anthropic)** as an AI assistant during development.
 
 ## How it was used
-
-- Designing and building the full frontend UI (landing page, user dashboard, admin dashboard)
-- Generating the backend API structure using Node.js, Express, and MySQL2
 - Setting up WebSocket integration for real-time CRUD broadcasting
 - Writing JWT authentication and role-based middleware (admin vs user)
 - Building the audit trail system — logging who did what and when
