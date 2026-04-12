@@ -255,3 +255,5 @@ INSERT INTO audit_logs (user_id, username, action, target_table, target_id, crea
 (6, 'carlos@school.edu', 'LOGIN',                     'users',       6,  '2025-12-03 10:00:00'),
 (7, 'ana@school.edu',    'LOGIN',                     'users',       7,  '2025-12-03 10:30:00'),
 (1, 'admin@school.edu',  'STATUS_CHANGE_TO_RESOLVED', 'lost_items',  20, '2025-12-03 14:00:00');
+
+

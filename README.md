@@ -94,7 +94,7 @@ Edit `.env` and fill in your values (DB password, JWT secret, port).
 ### Step 4 — Import the database
 
 1. Open **phpMyAdmin** at `http://localhost/phpmyadmin`
-2. Create a new database named `findit_db`
+2. Create a new database named `reclaim_db`
 3. Click **Import** → select `db_dump.sql` → click **Go**
 
 ### Step 5 — Fix seeded user passwords (run once only)
