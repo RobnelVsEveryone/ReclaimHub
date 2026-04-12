@@ -1,6 +1,6 @@
-# FindITLab
+# Reclaim Hub
 
-# FindIt — Lost & Found System
+# Reclaim Hub — Lost & Found System
 
 A real-time Lost & Found management system for campus use. Built with vanilla HTML/CSS/JS, Node.js, WebSocket, MySQL, and Leaflet.js.
 
@@ -55,7 +55,7 @@ findit/
 | Table | Description |
 |---|---|
 | `users` | Registered accounts with roles (admin / user) |
-| `found_items` | Items turned in and posted by admin |
+| `found_items` | Items turned in a nd posted by admin |
 | `lost_items` | Items reported lost by users, with optional map coordinates |
 | `audit_logs` | Full trail of all actions — who did what and when |
 
@@ -73,8 +73,8 @@ findit/
 ### Step 1 — Clone or download the project
 
 ```bash
-git clone https://github.com/yourusername/findit.git
-cd findit
+git clone https://github.com/yourusername/ReclaimHub.git
+cd ReclaimHub
 ```
 
 ### Step 2 — Install dependencies
@@ -138,42 +138,6 @@ You should see:
 
 > Change the admin password after first login.
 
----
-
-## API Endpoints
-
-### Auth
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/api/auth/register` | Public | Register a new user |
-| POST | `/api/auth/login` | Public | Login and receive JWT |
-| GET | `/api/auth/me` | Auth | Get current user info |
-
-### Found Items
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| GET | `/api/found` | Public | Get all found items |
-| POST | `/api/found` | Admin | Post a new found item |
-| PUT | `/api/found/:id` | Admin | Update a found item |
-| DELETE | `/api/found/:id` | Admin | Delete a found item |
-
-### Lost Items
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| GET | `/api/lost` | Auth | Get all lost items |
-| GET | `/api/lost/my` | Auth | Get current user's reports |
-| POST | `/api/lost` | Auth | Report a lost item |
-| PUT | `/api/lost/:id/status` | Admin | Update item status |
-| DELETE | `/api/lost/:id` | Admin | Delete a lost item |
-
-### System
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| GET | `/api/stats` | Public | Get live counts for dashboard |
-| GET | `/api/audit` | Admin | Get audit log entries |
-| GET | `/api/users` | Admin | Get all registered users |
-
----
 
 ## WebSocket Events
 
